@@ -46,6 +46,11 @@ exports.get = async (req, res, next) => {
 };
 exports.create = async (req, res, next) => {
   try {
+    if (!String(req.body.telefono || "").trim() || !String(req.body.direccion || "").trim())
+      return res.status(400).json({
+        ok: false,
+        error: "telefono y direccion son requeridos",
+      });
     const cart = await Cart.findOne({ usuario: req.user._id }).populate(
       "items.producto",
     );

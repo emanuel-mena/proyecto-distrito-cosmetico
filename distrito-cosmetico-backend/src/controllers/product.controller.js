@@ -1,5 +1,12 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
+const mongoose = require("mongoose");
+
+const identifierQuery = (value) => {
+  if (/^\d+$/.test(String(value))) return { id: Number(value) };
+  if (mongoose.isValidObjectId(value)) return { _id: value };
+  return { _id: null };
+};
 
 exports.list = async (req, res, next) => {
   try {
@@ -16,9 +23,7 @@ exports.list = async (req, res, next) => {
 
 exports.get = async (req, res, next) => {
   try {
-    const p = await Product.findOne({
-      $or: [{ _id: req.params.id }, { id: Number(req.params.id) }],
-    });
+    const p = await Product.findOne(identifierQuery(req.params.id));
     if (!p)
       return res
         .status(404)
@@ -37,10 +42,12 @@ exports.create = async (req, res, next) => {
         req.body.id ||
         ((await Product.findOne().sort({ id: -1 }))?.id || 0) + 1,
     };
-    if (data.categoria)
-      data.categoriaRef = (
-        await Category.findOne({ nombre: data.categoria })
-      )?._id;
+    if (data.categoria) {
+      const category = await Category.findOne({ nombre: data.categoria, activa: true });
+      if (!category)
+        return res.status(400).json({ ok: false, error: "Categoría no válida" });
+      data.categoriaRef = category._id;
+    }
     const p = await Product.create(data);
     res.status(201).json({ ok: true, data: p });
   } catch (e) {
@@ -50,9 +57,16 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
   try {
+    const data = { ...req.body };
+    if (data.categoria) {
+      const category = await Category.findOne({ nombre: data.categoria, activa: true });
+      if (!category)
+        return res.status(400).json({ ok: false, error: "Categoría no válida" });
+      data.categoriaRef = category._id;
+    }
     const p = await Product.findOneAndUpdate(
-      { $or: [{ _id: req.params.id }, { id: Number(req.params.id) }] },
-      req.body,
+      identifierQuery(req.params.id),
+      data,
       { new: true, runValidators: true },
     );
     if (!p)
@@ -67,9 +81,7 @@ exports.update = async (req, res, next) => {
 
 exports.remove = async (req, res, next) => {
   try {
-    const p = await Product.findOneAndDelete({
-      $or: [{ _id: req.params.id }, { id: Number(req.params.id) }],
-    });
+    const p = await Product.findOneAndDelete(identifierQuery(req.params.id));
     if (!p)
       return res
         .status(404)

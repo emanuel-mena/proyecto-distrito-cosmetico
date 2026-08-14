@@ -4,7 +4,7 @@ const sign = require("../utils/jwt");
 
 exports.register = async (req, res, next) => {
   try {
-    const { nombre, correo, password, rol } = req.body;
+    const { nombre, correo, password } = req.body;
     if (!nombre || !correo || !password)
       return res
         .status(400)
@@ -17,7 +17,7 @@ exports.register = async (req, res, next) => {
       nombre,
       correo,
       password: await bcrypt.hash(password, 10),
-      rol: rol === "admin" ? "admin" : "cliente",
+      rol: "cliente",
     });
     res
       .status(201)

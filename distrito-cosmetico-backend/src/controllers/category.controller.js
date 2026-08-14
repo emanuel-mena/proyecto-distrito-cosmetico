@@ -1,4 +1,5 @@
 const Category = require("../models/Category");
+const Product = require("../models/Product");
 const slugify = (s) =>
   s
     .toLowerCase()
@@ -29,14 +30,21 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
   try {
-    const c = await Category.findByIdAndUpdate(req.params.id, req.body, {
+    const previous = await Category.findById(req.params.id);
+    if (!previous)
+      return res.status(404).json({ ok: false, error: "Categoría no encontrada" });
+    const data = { ...req.body };
+    if (data.nombre && !data.slug) data.slug = slugify(data.nombre);
+    const c = await Category.findByIdAndUpdate(req.params.id, data, {
       new: true,
       runValidators: true,
     });
-    if (!c)
-      return res
-        .status(404)
-        .json({ ok: false, error: "Categoría no encontrada" });
+    if (c.nombre !== previous.nombre) {
+      await Product.updateMany(
+        { categoriaRef: c._id },
+        { categoria: c.nombre },
+      );
+    }
     res.json({ ok: true, data: c });
   } catch (e) {
     next(e);
@@ -45,6 +53,11 @@ exports.update = async (req, res, next) => {
 
 exports.remove = async (req, res, next) => {
   try {
+    if (await Product.exists({ categoriaRef: req.params.id }))
+      return res.status(409).json({
+        ok: false,
+        error: "No se puede eliminar una categoría que tiene productos",
+      });
     if (await Category.findByIdAndDelete(req.params.id))
       return res.status(204).send();
     res.status(404).json({ ok: false, error: "Categoría no encontrada" });

@@ -1,26 +1,49 @@
-# Distrito Cosmético Backend
+# Distrito Cosmético
 
-Backend REST con Node.js, Express, MongoDB y Mongoose. El frontend no forma parte de este servicio y no fue modificado.
+Aplicación web completa con API REST en Node.js/Express, MongoDB y frontend Vue 3. En producción Express sirve tanto `/api` como la SPA construida.
 
-## Instalación
+## Requisitos
 
-1. Instalar MongoDB local o usar una URI de MongoDB Atlas.
-2. Ejecutar `npm install`.
-3. Copiar `.env.example` como `.env` y configurar `MONGODB_URI` y `JWT_SECRET`.
-4. Cargar datos iniciales con `node src/seed/seed.js`.
-5. Iniciar con `npm run dev` o `npm start`.
+- Node.js 20.19 o superior.
+- MongoDB local o una URI de MongoDB Atlas.
+- El repositorio completo, incluido el submódulo del frontend.
 
-Health check: `GET http://localhost:3000/api/health`.
+```bash
+git clone --recurse-submodules <url-del-repositorio>
+cd proyecto-distrito-cosmetico/distrito-cosmetico-backend
+npm ci
+```
+
+Copie `.env.example` como `.env` y configure al menos `MONGODB_URI` y `JWT_SECRET`. No utilice las credenciales administrativas predeterminadas en producción.
+
+## Desarrollo
+
+```bash
+npm run seed
+npm run dev
+```
+
+`npm run dev` inicia Express en el puerto 3000 y Vite en el puerto 5173. Vite redirige `/api` al backend. Para iniciar solamente el API use `npm run dev:api`.
+
+## Build y ejecución
+
+```bash
+npm run build
+npm start
+```
+
+El build instala de forma reproducible las dependencias del frontend, ejecuta Vite y copia el resultado a `public/`. `npm start` sirve API, archivos estáticos y el fallback de Vue Router desde un único proceso Node.
+
+Variables disponibles:
+
+- `MONGODB_URI`: conexión de MongoDB.
+- `JWT_SECRET`: secreto de firma de sesiones.
+- `PORT`: puerto HTTP, predeterminado `3000`.
+- `CORS_ORIGIN`: origen permitido durante desarrollo separado.
+- `ADMIN_EMAIL` y `ADMIN_PASSWORD`: administrador creado por `npm run seed`.
 
 ## API
 
-Las rutas están agrupadas bajo `/api`: `auth`, `products`, `categories`, `cart`, `orders` y `currency`. Las rutas protegidas reciben `Authorization: Bearer <token>`. El primer usuario administrador se crea con `ADMIN_EMAIL` y `ADMIN_PASSWORD` durante el seed.
+Las rutas se agrupan bajo `/api`: `auth`, `products`, `categories`, `cart`, `orders` y `currency`. Las rutas protegidas reciben `Authorization: Bearer <token>`.
 
-Ejemplos:
-
-```bash
-curl http://localhost:3000/api/products
-curl "http://localhost:3000/api/currency/convert?amount=15000&from=crc&to=usd"
-```
-
-La conversión usa `fawazahmed0/exchange-api`, con fallback CDN incluido.
+Health check: `GET /api/health`.
