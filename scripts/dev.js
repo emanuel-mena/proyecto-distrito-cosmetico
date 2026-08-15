@@ -1,10 +1,8 @@
 const { spawn } = require("child_process");
 const path = require("path");
 
-const backendRoot = path.resolve(__dirname, "..");
 const frontendRoot = path.resolve(
-  backendRoot,
-  "../distrito-cosmetico-frontend",
+  "distrito-cosmetico-frontend",
 );
 const npmCli =
   process.env.npm_execpath ||

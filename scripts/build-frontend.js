@@ -2,14 +2,12 @@ const { spawnSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
-const backendRoot = path.resolve(__dirname, "..");
 const frontendRoot = path.resolve(
-  backendRoot,
-  "../distrito-cosmetico-frontend",
+  "distrito-cosmetico-frontend"
 );
 const frontendPackage = path.join(frontendRoot, "package.json");
 const frontendDist = path.join(frontendRoot, "dist");
-const publicDir = path.join(backendRoot, "public");
+const publicDir = path.join("public");
 const npmCli =
   process.env.npm_execpath ||
   path.resolve(path.dirname(process.execPath), "node_modules/npm/bin/npm-cli.js");
