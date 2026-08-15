@@ -30,7 +30,7 @@ proyecto-distrito-cosmetico/
 El frontend se mantiene como un submódulo Git. Para clonar el proyecto completo:
 
 ```bash
-git clone --recurse-submodules <url-del-repositorio>
+git clone --recurse-submodules https://github.com/emanuel-mena/proyecto-distrito-cosmetico
 cd proyecto-distrito-cosmetico
 ```
 
