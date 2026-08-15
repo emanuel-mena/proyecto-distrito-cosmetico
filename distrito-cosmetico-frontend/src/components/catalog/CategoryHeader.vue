@@ -6,8 +6,9 @@ defineProps({
 </script>
 
 <template>
-  <div class="text-center mb-5">
-    <h1 class="display-4 fw-bold">{{ title }}</h1>
-    <p class="lead text-muted">{{ description }}</p>
+  <div class="category-heading">
+    <span class="section-eyebrow">Colección Distrito</span>
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
   </div>
 </template>

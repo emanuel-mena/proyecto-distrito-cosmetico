@@ -6,6 +6,7 @@ import { useCartStore } from '../stores/cart'
 import { useOrdersStore } from '../stores/orders'
 import { useCatalogStore } from '../stores/catalog'
 import { useCurrencyStore } from '../stores/currency'
+import { useFeedbackStore } from '../stores/feedback'
 import { assetUrl } from '../utils/format'
 
 const router = useRouter()
@@ -14,6 +15,7 @@ const cart = useCartStore()
 const orders = useOrdersStore()
 const catalog = useCatalogStore()
 const currency = useCurrencyStore()
+const feedback = useFeedbackStore()
 const checkoutError = ref('')
 const checkoutLoading = ref(false)
 const delivery = reactive({ telefono: '', direccion: '' })
@@ -24,9 +26,16 @@ const imageFallback = (event) => {
 }
 
 const emptyCart = async () => {
-  if (!confirm('¿Deseas vaciar el carrito?')) return
+  const accepted = await feedback.confirm({
+    title: 'Vaciar carrito',
+    message: 'Se eliminarán todos los productos que agregaste. Esta acción no se puede deshacer.',
+    confirmLabel: 'Sí, vaciar',
+    tone: 'danger',
+  })
+  if (!accepted) return
   try {
     await cart.clear()
+    feedback.notify({ message: 'El carrito quedó vacío.', type: 'info' })
   } catch (error) {
     checkoutError.value = error.message
   }
@@ -53,22 +62,27 @@ const removeItem = async (id) => {
 const checkout = async () => {
   if (!cart.items.length) return
   if (!auth.activeUser) {
-    alert('Inicia sesión para finalizar tu compra.')
+    feedback.notify({ message: 'Inicia sesión para finalizar tu compra.', type: 'info' })
     await router.push({ name: 'login', query: { redirect: '/carrito' } })
     return
   }
-  if (!confirm('¿Confirmas la compra?')) return
   if (!delivery.telefono.trim() || !delivery.direccion.trim()) {
     checkoutError.value = 'Ingresa un teléfono y una dirección de entrega.'
     return
   }
+  const accepted = await feedback.confirm({
+    title: 'Confirmar compra',
+    message: `Tu pedido por ${currency.format(cart.total)} quedará registrado con los datos de entrega indicados.`,
+    confirmLabel: 'Confirmar pedido',
+  })
+  if (!accepted) return
   checkoutError.value = ''
   checkoutLoading.value = true
   try {
     await orders.createOrder(delivery)
     await Promise.all([cart.load(), catalog.load()])
     Object.assign(delivery, { telefono: '', direccion: '' })
-    alert('¡Compra realizada exitosamente!')
+    feedback.notify({ message: '¡Compra realizada exitosamente!', type: 'success' })
   } catch (error) {
     checkoutError.value = error.message
     await Promise.all([cart.load(), catalog.load()])
@@ -79,126 +93,129 @@ const checkout = async () => {
 </script>
 
 <template>
-  <main class="container py-5">
-    <div class="d-flex align-items-center justify-content-between mb-5">
-      <h1 class="mb-0">Mi Carrito</h1>
-      <RouterLink to="/" class="btn btn-outline-secondary">Seguir comprando</RouterLink>
+  <main class="container cart-page py-5">
+    <div class="page-heading-row">
+      <div>
+        <span class="section-eyebrow">Tu selección</span>
+        <h1>Mi carrito</h1>
+        <p v-if="cart.items.length" class="mb-0">
+          {{ cart.count }} {{ cart.count === 1 ? 'producto' : 'productos' }} en tu pedido
+        </p>
+      </div>
+      <RouterLink to="/" class="btn-app btn-app-secondary">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i>Seguir comprando
+      </RouterLink>
     </div>
 
-    <div class="card shadow border-0">
-      <div class="card-body">
-        <div v-if="cart.items.length === 0" class="text-center py-5">
-          <i class="bi bi-cart-x display-4 text-muted"></i>
-          <p class="lead text-muted mt-3 mb-0">Tu carrito está vacío.</p>
-          <RouterLink to="/" class="btn btn-dark mt-4">Explorar productos</RouterLink>
+    <div v-if="cart.items.length === 0" class="empty-state cart-empty-state">
+      <span class="empty-state-icon"><i class="bi bi-bag" aria-hidden="true"></i></span>
+      <h2>Tu carrito está esperando</h2>
+      <p>Explora nuestras colecciones y encuentra algo especial para ti.</p>
+      <RouterLink to="/" class="btn-app btn-app-primary">Explorar productos</RouterLink>
+    </div>
+
+    <div v-else class="cart-layout">
+      <section class="cart-products-panel" aria-labelledby="cartProductsTitle">
+        <div class="cart-panel-heading">
+          <h2 id="cartProductsTitle">Productos</h2>
         </div>
-
-        <template v-else>
-          <div class="table-responsive">
-            <table class="table align-middle mb-0">
-              <thead>
-                <tr>
-                  <th>Producto</th>
-                  <th>Precio</th>
-                  <th>Cantidad</th>
-                  <th>Subtotal</th>
-                  <th><span class="visually-hidden">Acciones</span></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in cart.items" :key="item.id">
-                  <td class="cart-product">
-                    <img
-                      :src="assetUrl(item.product.imagen)"
-                      :alt="item.product.nombre"
-                      @error="imageFallback"
-                    />
-                    <span>{{ item.product.nombre }}</span>
-                  </td>
-                  <td>{{ currency.format(item.product.precio) }}</td>
-                  <td>
-                    <div class="input-group input-group-sm cart-quantity">
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        :aria-label="`Disminuir cantidad de ${item.product.nombre}`"
-                        @click="updateQuantity(item.id, item.cantidad - 1)"
-                      >
-                        −
-                      </button>
-                      <span
-                        class="form-control text-center"
-                        :aria-label="`Cantidad de ${item.product.nombre}`"
-                      >
-                        {{ item.cantidad }}
-                      </span>
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        :disabled="item.cantidad >= item.product.stock"
-                        :aria-label="`Aumentar cantidad de ${item.product.nombre}`"
-                        @click="updateQuantity(item.id, item.cantidad + 1)"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </td>
-                  <td>{{ currency.format(item.product.precio * item.cantidad) }}</td>
-                  <td>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-outline-danger"
-                      @click="removeItem(item.id)"
-                    >
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <hr />
-          <div class="d-flex justify-content-end align-items-center gap-3">
-            <h4 class="mb-0">Total:</h4>
-            <h4 class="mb-0">{{ currency.format(cart.total) }}</h4>
-          </div>
-          <div v-if="auth.isAuthenticated" class="row g-3 mt-3">
-            <div class="col-md-4">
-              <label for="checkoutPhone" class="form-label">Teléfono</label>
-              <input
-                id="checkoutPhone"
-                v-model.trim="delivery.telefono"
-                class="form-control"
-                required
+        <div class="cart-items">
+          <article v-for="item in cart.items" :key="item.id" class="cart-line">
+            <div class="cart-product">
+              <img
+                :src="assetUrl(item.product.imagen)"
+                :alt="item.product.nombre"
+                @error="imageFallback"
               />
+              <div>
+                <span class="product-category">{{ item.product.categoria }}</span>
+                <h3>{{ item.product.nombre }}</h3>
+                <span class="cart-unit-price">{{ currency.format(item.product.precio) }} c/u</span>
+              </div>
             </div>
-            <div class="col-md-8">
-              <label for="checkoutAddress" class="form-label">Dirección de entrega</label>
-              <input
-                id="checkoutAddress"
-                v-model.trim="delivery.direccion"
-                class="form-control"
-                required
-              />
+            <div class="cart-quantity" aria-label="Selector de cantidad">
+              <button
+                type="button"
+                :aria-label="`Disminuir cantidad de ${item.product.nombre}`"
+                @click="updateQuantity(item.id, item.cantidad - 1)"
+              >
+                −
+              </button>
+              <span :aria-label="`Cantidad de ${item.product.nombre}`">{{ item.cantidad }}</span>
+              <button
+                type="button"
+                :disabled="item.cantidad >= item.product.stock"
+                :aria-label="`Aumentar cantidad de ${item.product.nombre}`"
+                @click="updateQuantity(item.id, item.cantidad + 1)"
+              >
+                +
+              </button>
             </div>
-          </div>
-          <div v-if="checkoutError" class="alert alert-danger mt-3 mb-0">{{ checkoutError }}</div>
-          <div class="d-flex flex-column flex-md-row gap-3 mt-4">
-            <button type="button" class="btn btn-outline-danger flex-fill" @click="emptyCart">
-              Vaciar carrito
-            </button>
+            <div class="cart-line-total">
+              <span>Subtotal</span>
+              <strong>{{ currency.format(item.product.precio * item.cantidad) }}</strong>
+            </div>
             <button
               type="button"
-              class="btn btn-success flex-fill"
-              :disabled="checkoutLoading"
-              @click="checkout"
+              class="cart-remove"
+              :aria-label="`Eliminar ${item.product.nombre}`"
+              @click="removeItem(item.id)"
             >
-              {{ checkoutLoading ? 'Procesando...' : 'Finalizar compra' }}
+              <i class="bi bi-trash3" aria-hidden="true"></i>
             </button>
+          </article>
+        </div>
+      </section>
+
+      <aside class="cart-summary" aria-labelledby="cartSummaryTitle">
+        <h2 id="cartSummaryTitle">Resumen del pedido</h2>
+        <div class="summary-row">
+          <span>Productos</span><span>{{ cart.count }}</span>
+        </div>
+        <div class="summary-row summary-total">
+          <span>Total</span><strong>{{ currency.format(cart.total) }}</strong>
+        </div>
+
+        <div v-if="auth.isAuthenticated" class="delivery-fields">
+          <h3>Datos de entrega</h3>
+          <div>
+            <label for="checkoutPhone" class="form-label">Teléfono</label>
+            <input
+              id="checkoutPhone"
+              v-model.trim="delivery.telefono"
+              class="form-control app-input"
+              autocomplete="tel"
+              required
+            />
           </div>
-        </template>
-      </div>
+          <div>
+            <label for="checkoutAddress" class="form-label">Dirección de entrega</label>
+            <input
+              id="checkoutAddress"
+              v-model.trim="delivery.direccion"
+              class="form-control app-input"
+              autocomplete="street-address"
+              required
+            />
+          </div>
+        </div>
+
+        <div v-if="checkoutError" class="app-status-banner app-status-banner--danger">
+          <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>{{ checkoutError }}
+        </div>
+        <button
+          type="button"
+          class="btn-app btn-app-primary w-100"
+          :disabled="checkoutLoading"
+          @click="checkout"
+        >
+          <i class="bi bi-lock-fill" aria-hidden="true"></i>
+          {{ checkoutLoading ? 'Procesando...' : 'Finalizar compra' }}
+        </button>
+        <button type="button" class="cart-clear-action" @click="emptyCart">
+          Vaciar carrito
+        </button>
+      </aside>
     </div>
   </main>
 </template>

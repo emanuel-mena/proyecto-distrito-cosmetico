@@ -52,13 +52,18 @@ const selectProduct = async (product) => {
 </script>
 
 <template>
-  <main class="container py-5">
+  <main class="container catalog-page py-5">
     <CategoryHeader
       :title="heading"
       :description="route.meta.description || 'Explora nuestros productos.'"
     />
-    <div v-if="catalog.loading" class="text-center py-5">Cargando productos...</div>
-    <div v-else-if="catalog.error" class="alert alert-danger">{{ catalog.error }}</div>
+    <div v-if="catalog.loading" class="loading-state" role="status">
+      <span class="loading-spinner" aria-hidden="true"></span>
+      <span>Cargando productos...</span>
+    </div>
+    <div v-else-if="catalog.error" class="app-status-banner app-status-banner--danger">
+      <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>{{ catalog.error }}
+    </div>
     <ProductGrid v-else :products="products" @select="selectProduct" />
   </main>
   <ProductModal :product="selectedProduct" @close="selectedProduct = null" />

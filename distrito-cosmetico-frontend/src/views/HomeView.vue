@@ -36,58 +36,61 @@ const selectProduct = async (product) => {
 </script>
 
 <template>
-  <main class="container py-4">
-    <section class="row g-3 mb-5" aria-label="Promociones destacadas">
-      <div class="col-12 col-md-4">
-        <div class="hero-banner">
+  <main class="container home-page py-4">
+    <section class="promo-grid" aria-label="Promociones destacadas">
+      <RouterLink to="/promociones" class="hero-banner">
           <img
             :src="assetUrl('img/promoMaquillaje.jpeg')"
             alt="Promoción maquillaje"
             class="img-fluid"
           />
-        </div>
-      </div>
-      <div class="col-12 col-md-4">
-        <div class="hero-banner">
+          <span class="hero-banner-overlay">Promociones de maquillaje</span>
+      </RouterLink>
+      <RouterLink to="/skincare" class="hero-banner">
           <img
             :src="assetUrl('img/SkincarePromo.jpg')"
             alt="Promoción cuidados"
             class="img-fluid"
           />
-        </div>
-      </div>
-      <div class="col-12 col-md-4">
-        <div class="hero-banner d-none d-md-block">
+          <span class="hero-banner-overlay">Cuida tu piel</span>
+      </RouterLink>
+      <RouterLink to="/fragancias" class="hero-banner hero-banner--optional">
           <img
             :src="assetUrl('img/promoPerfume.webp')"
             alt="Promoción fragancias"
             class="img-fluid"
           />
-        </div>
-      </div>
+          <span class="hero-banner-overlay">Encuentra tu fragancia</span>
+      </RouterLink>
     </section>
 
-    <section class="mb-5">
-      <div class="d-flex justify-content-between align-items-end mb-3">
-        <h2 class="section-title fs-4 mb-0">Más vendidos</h2>
+    <section class="home-product-section">
+      <div class="section-heading-row">
+        <div>
+          <span class="section-eyebrow">Favoritos de la comunidad</span>
+          <h2 class="section-title">Más vendidos</h2>
+        </div>
         <RouterLink
           to="/mas-vendidos"
-          class="text-decoration-none d-none d-lg-inline-flex align-items-center link-explorar"
+          class="link-explorar"
         >
-          Explorar más <i class="bi bi-arrow-right-circle ms-2 fs-5"></i>
+          Ver colección <i class="bi bi-arrow-right" aria-hidden="true"></i>
         </RouterLink>
       </div>
       <ProductGrid :products="bestSellers" horizontal @select="selectProduct" />
     </section>
 
-    <section class="mb-5">
-      <div class="d-flex justify-content-between align-items-end mb-3">
-        <h2 class="section-title fs-4 mb-0">Nuevos Productos</h2>
+    <section class="home-product-section">
+      <div class="section-heading-row">
+        <div>
+          <span class="section-eyebrow">Recién llegados</span>
+          <h2 class="section-title">Nuevos productos</h2>
+        </div>
         <RouterLink
           to="/nuevos-productos"
-          class="text-decoration-none d-none d-lg-inline-flex align-items-center link-explorar"
+          class="link-explorar"
         >
-          Explorar más <i class="bi bi-arrow-right-circle ms-2 fs-5"></i>
+          Ver colección <i class="bi bi-arrow-right" aria-hidden="true"></i>
         </RouterLink>
       </div>
       <ProductGrid :products="newProducts" horizontal @select="selectProduct" />

@@ -75,18 +75,19 @@ onBeforeUnmount(() => {
 <template>
   <header class="d-none d-lg-block">
     <div class="header-top py-3">
-      <div class="container d-flex align-items-center">
-        <RouterLink to="/" class="logo-box me-3">
-          <img
-            :src="assetUrl('data/brand/LogComp.svg')"
-            alt="Logo Distrito Cosmético"
-            class="logo-img"
-          />
-        </RouterLink>
+      <div class="container app-header-main">
+        <div class="header-brand">
+          <RouterLink to="/" class="logo-box">
+            <img
+              :src="assetUrl('data/brand/LogComp.svg')"
+              alt="Logo Distrito Cosmético"
+              class="logo-img"
+            />
+          </RouterLink>
+          <h1 class="mb-0 fs-4 text-dark">Distrito Cosmético</h1>
+        </div>
 
-        <h1 class="mb-0 fs-4 text-dark">Distrito Cosmético</h1>
-
-        <div class="mx-auto w-50 px-4">
+        <div class="header-search">
           <div class="search-bar-wrapper">
             <input
               v-model="catalog.searchQuery"
@@ -99,22 +100,26 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
-        <div class="d-flex align-items-center fs-4 header-icons">
-          <select
-            class="form-select form-select-sm me-2"
-            :value="currency.currency"
-            aria-label="Moneda"
-            @change="currency.setCurrency($event.target.value)"
-          >
-            <option value="CRC">CRC</option>
-            <option value="USD">USD</option>
-          </select>
-          <RouterLink v-if="auth.isAdmin" to="/admin" class="btn btn-sm btn-outline-dark me-2">
+        <div class="header-actions header-icons">
+          <label class="currency-picker" title="Seleccionar moneda">
+            <i class="bi bi-currency-exchange" aria-hidden="true"></i>
+            <span class="visually-hidden">Moneda</span>
+            <select
+              :value="currency.currency"
+              aria-label="Seleccionar moneda"
+              @change="currency.setCurrency($event.target.value)"
+            >
+              <option value="CRC">CRC</option>
+              <option value="USD">USD</option>
+            </select>
+            <i class="bi bi-chevron-down currency-chevron" aria-hidden="true"></i>
+          </label>
+          <RouterLink v-if="auth.isAdmin" to="/admin" class="btn btn-sm btn-outline-dark">
             Admin
           </RouterLink>
           <RouterLink
             to="/carrito"
-            class="cart-pill text-decoration-none me-2"
+            class="cart-pill text-decoration-none"
             aria-label="Mi carrito"
           >
             <i class="bi bi-cart3 fs-4" aria-hidden="true"></i>

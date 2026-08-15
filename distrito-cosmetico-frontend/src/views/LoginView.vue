@@ -65,29 +65,32 @@ const submitRegister = async () => {
 </script>
 
 <template>
-  <main class="auth-page bg-light">
-    <div class="container py-5">
+  <main class="auth-page">
+    <div class="auth-orb auth-orb--one" aria-hidden="true"></div>
+    <div class="auth-orb auth-orb--two" aria-hidden="true"></div>
+    <div class="container auth-container py-5">
       <div class="row justify-content-center">
         <div class="col-md-7 col-lg-6">
-          <div class="card shadow border-0">
-            <div class="card-body p-5">
-              <div class="text-center mb-4">
+          <div class="auth-card">
+            <div class="auth-card-body">
+              <div class="auth-brand">
                 <img
                   :src="assetUrl('data/brand/LogComp.svg')"
                   alt="Distrito Cosmético"
-                  class="mb-3 auth-logo"
+                  class="auth-logo"
                 />
-                <h2 class="fw-bold">Distrito Cosmético</h2>
-                <p class="text-muted">Bienvenido</p>
+                <h1>Distrito Cosmético</h1>
+                <p>Tu espacio de belleza y cuidado personal</p>
               </div>
 
-              <ul class="nav nav-pills nav-fill mb-4" role="tablist">
+              <ul class="auth-tabs" role="tablist">
                 <li class="nav-item">
                   <button
                     type="button"
                     class="nav-link"
                     :class="{ active: activeTab === 'login' }"
                     role="tab"
+                    :aria-selected="activeTab === 'login'"
                     @click="activeTab = 'login'"
                   >
                     Iniciar Sesión
@@ -99,6 +102,7 @@ const submitRegister = async () => {
                     class="nav-link"
                     :class="{ active: activeTab === 'register' }"
                     role="tab"
+                    :aria-selected="activeTab === 'register'"
                     @click="activeTab = 'register'"
                   >
                     Registrarse
@@ -106,8 +110,12 @@ const submitRegister = async () => {
                 </li>
               </ul>
 
-              <div v-if="message" class="alert" :class="`alert-${message.type}`">
-                {{ message.text }}
+              <div
+                v-if="message"
+                class="app-status-banner"
+                :class="`app-status-banner--${message.type}`"
+              >
+                <i class="bi bi-info-circle-fill" aria-hidden="true"></i>{{ message.text }}
               </div>
 
               <form v-if="activeTab === 'login'" novalidate @submit.prevent="submitLogin">
@@ -117,7 +125,7 @@ const submitRegister = async () => {
                     id="loginEmail"
                     v-model="loginForm.correo"
                     type="email"
-                    class="form-control"
+                    class="form-control app-input"
                     :class="{ 'is-invalid': loginErrors.correo }"
                     placeholder="correo@ejemplo.com"
                   />
@@ -129,13 +137,13 @@ const submitRegister = async () => {
                     id="loginPassword"
                     v-model="loginForm.password"
                     type="password"
-                    class="form-control"
+                    class="form-control app-input"
                     :class="{ 'is-invalid': loginErrors.password }"
                     placeholder="********"
                   />
                   <div class="invalid-feedback">La contraseña es obligatoria.</div>
                 </div>
-                <button type="submit" class="btn btn-primary w-100" :disabled="auth.loading">
+                <button type="submit" class="btn-app btn-app-primary w-100" :disabled="auth.loading">
                   {{ auth.loading ? 'Ingresando...' : 'Iniciar Sesión' }}
                 </button>
               </form>
@@ -147,7 +155,7 @@ const submitRegister = async () => {
                     id="registerName"
                     v-model="registerForm.nombre"
                     type="text"
-                    class="form-control"
+                    class="form-control app-input"
                     :class="{ 'is-invalid': registerErrors.nombre }"
                     placeholder="Nombre completo"
                   />
@@ -159,7 +167,7 @@ const submitRegister = async () => {
                     id="registerEmail"
                     v-model="registerForm.correo"
                     type="email"
-                    class="form-control"
+                    class="form-control app-input"
                     :class="{ 'is-invalid': registerErrors.correo }"
                     placeholder="correo@ejemplo.com"
                   />
@@ -171,7 +179,7 @@ const submitRegister = async () => {
                     id="registerPassword"
                     v-model="registerForm.password"
                     type="password"
-                    class="form-control"
+                    class="form-control app-input"
                     :class="{ 'is-invalid': registerErrors.password }"
                     placeholder="Mínimo 8 caracteres"
                   />
@@ -185,19 +193,19 @@ const submitRegister = async () => {
                     id="registerConfirmation"
                     v-model="registerForm.confirmation"
                     type="password"
-                    class="form-control"
+                    class="form-control app-input"
                     :class="{ 'is-invalid': registerErrors.confirmation }"
                     placeholder="Repita la contraseña"
                   />
                   <div class="invalid-feedback">Las contraseñas no coinciden.</div>
                 </div>
-                <button type="submit" class="btn btn-success w-100" :disabled="auth.loading">
+                <button type="submit" class="btn-app btn-app-primary w-100" :disabled="auth.loading">
                   {{ auth.loading ? 'Creando...' : 'Crear cuenta' }}
                 </button>
               </form>
 
-              <div class="text-center mt-4">
-                <RouterLink to="/" class="text-decoration-none">← Volver a la tienda</RouterLink>
+              <div class="auth-return">
+                <RouterLink to="/"><i class="bi bi-arrow-left" aria-hidden="true"></i>Volver a la tienda</RouterLink>
               </div>
             </div>
           </div>
