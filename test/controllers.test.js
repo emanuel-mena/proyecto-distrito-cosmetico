@@ -114,3 +114,149 @@ test("una orden requiere teléfono y dirección", async () => {
   assert.equal(res.state.status, 400);
   assert.match(res.state.body.error, /telefono y direccion/);
 });
+
+test("una categoría requiere nombre antes de generar el slug", async () => {
+  const res = response();
+  await categoryController.create({ body: {} }, res, assert.fail);
+  assert.equal(res.state.status, 400);
+  assert.match(res.state.body.error, /nombre/);
+});
+
+test("una orden guarda sus productos y descuenta el stock", async () => {
+  const Cart = require("../src/models/Cart");
+  const Order = require("../src/models/Order");
+  const originalCartFindOne = Cart.findOne;
+  const originalCartUpdate = Cart.findByIdAndUpdate;
+  const originalProductUpdate = Product.findOneAndUpdate;
+  const originalOrderCreate = Order.create;
+  let created;
+  let cleared = false;
+  const product = {
+    _id: "507f1f77bcf86cd799439012",
+    nombre: "Labial",
+    precio: 2500,
+  };
+  Cart.findOne = () => ({
+    populate: async () => ({
+      _id: "507f1f77bcf86cd799439013",
+      items: [{ producto: product, cantidad: 2 }],
+    }),
+  });
+  Product.findOneAndUpdate = async () => product;
+  Order.create = async (input) => {
+    created = input;
+    return { _id: "507f1f77bcf86cd799439014", ...input };
+  };
+  Cart.findByIdAndUpdate = async () => {
+    cleared = true;
+  };
+  try {
+    const res = response();
+    await orderController.create(
+      {
+        body: { telefono: "8888-8888", direccion: "San José" },
+        user: {
+          _id: "507f1f77bcf86cd799439015",
+          nombre: "Cliente",
+          correo: "cliente@example.com",
+        },
+      },
+      res,
+      assert.fail,
+    );
+    assert.equal(res.state.status, 201);
+    assert.equal(created.productos.length, 1);
+    assert.equal(created.productos[0].nombre, "Labial");
+    assert.equal(created.total, 5000);
+    assert.equal(cleared, true);
+  } finally {
+    Cart.findOne = originalCartFindOne;
+    Cart.findByIdAndUpdate = originalCartUpdate;
+    Product.findOneAndUpdate = originalProductUpdate;
+    Order.create = originalOrderCreate;
+  }
+});
+
+test("una orden rechaza productos eliminados sin modificar el stock", async () => {
+  const Cart = require("../src/models/Cart");
+  const originalCartFindOne = Cart.findOne;
+  const originalProductUpdate = Product.findOneAndUpdate;
+  let stockUpdates = 0;
+  Cart.findOne = () => ({
+    populate: async () => ({
+      items: [{ producto: null, cantidad: 1 }],
+    }),
+  });
+  Product.findOneAndUpdate = async () => {
+    stockUpdates += 1;
+  };
+  try {
+    const res = response();
+    let error;
+    await orderController.create(
+      {
+        body: { telefono: "8888-8888", direccion: "San José" },
+        user: {},
+      },
+      res,
+      (cause) => {
+        error = cause;
+      },
+    );
+    assert.equal(error.status, 409);
+    assert.match(error.message, /ya no existe/);
+    assert.equal(stockUpdates, 0);
+  } finally {
+    Cart.findOne = originalCartFindOne;
+    Product.findOneAndUpdate = originalProductUpdate;
+  }
+});
+
+test("el stock se restaura cuando no se puede crear la orden", async () => {
+  const Cart = require("../src/models/Cart");
+  const Order = require("../src/models/Order");
+  const originalCartFindOne = Cart.findOne;
+  const originalProductConditionalUpdate = Product.findOneAndUpdate;
+  const originalProductUpdate = Product.findByIdAndUpdate;
+  const originalOrderCreate = Order.create;
+  let rollback;
+  const product = {
+    _id: "507f1f77bcf86cd799439012",
+    nombre: "Labial",
+    precio: 2500,
+  };
+  Cart.findOne = () => ({
+    populate: async () => ({
+      items: [{ producto: product, cantidad: 2 }],
+    }),
+  });
+  Product.findOneAndUpdate = async () => product;
+  Product.findByIdAndUpdate = async (id, update) => {
+    rollback = { id, update };
+  };
+  Order.create = async () => {
+    throw new Error("No se pudo guardar la orden");
+  };
+  try {
+    const res = response();
+    let error;
+    await orderController.create(
+      {
+        body: { telefono: "8888-8888", direccion: "San José" },
+        user: {},
+      },
+      res,
+      (cause) => {
+        error = cause;
+      },
+    );
+    assert.match(error.message, /No se pudo guardar/);
+    assert.equal(String(rollback.id), product._id);
+    assert.deepEqual(rollback.update, { $inc: { stock: 2 } });
+  } finally {
+    Cart.findOne = originalCartFindOne;
+    Product.findOneAndUpdate = originalProductConditionalUpdate;
+    Product.findByIdAndUpdate = originalProductUpdate;
+    Order.create = originalOrderCreate;
+  }
+});

@@ -9,7 +9,7 @@ const Product = require("../models/Product");
 const Order = require("../models/Order");
 const root = path.resolve(
   __dirname,
-  "../../../distrito-cosmetico-frontend/PrograWebA-Proyecto/src/data",
+  "../../distrito-cosmetico-frontend/src/data",
 );
 
 const read = (n) => JSON.parse(fs.readFileSync(path.join(root, n), "utf8"));

@@ -18,9 +18,14 @@ const slugify = (s) =>
 
 exports.create = async (req, res, next) => {
   try {
+    const nombre = String(req.body.nombre || "").trim();
+    if (!nombre)
+      return res
+        .status(400)
+        .json({ ok: false, error: "nombre es requerido" });
     const c = await Category.create({
-      nombre: req.body.nombre,
-      slug: req.body.slug || slugify(req.body.nombre),
+      nombre,
+      slug: req.body.slug || slugify(nombre),
     });
     res.status(201).json({ ok: true, data: c });
   } catch (e) {
