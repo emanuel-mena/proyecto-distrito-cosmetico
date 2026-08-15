@@ -5,7 +5,7 @@ const path = require("path");
 const backendRoot = path.resolve(__dirname, "..");
 const frontendRoot = path.resolve(
   backendRoot,
-  "../distrito-cosmetico-frontend/PrograWebA-Proyecto",
+  "../distrito-cosmetico-frontend",
 );
 const frontendPackage = path.join(frontendRoot, "package.json");
 const frontendDist = path.join(frontendRoot, "dist");

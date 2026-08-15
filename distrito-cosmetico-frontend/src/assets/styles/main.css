@@ -1,0 +1,612 @@
+:root {
+  /* Paleta de colores extraída del wireframe */
+  --color-1: #7161ef; /* Morado Oscuro */
+  --color-2: #957fef; /* Morado Medio */
+  --color-3: #b79ced; /* Morado Claro */
+  --color-4: #dec0f1; /* Morado Muy Claro */
+  --color-5: #ffffff; /* Arena / Fondo principal */
+}
+
+body {
+  background-color: var(--color-5);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#app,
+.app-root {
+  min-height: 100vh;
+}
+
+.store-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.store-layout > main {
+  flex: 1 0 auto;
+}
+
+/* Colores de Header y Footer */
+.header-top,
+.mobile-header {
+  background-color: var(--color-3);
+}
+
+.header-nav {
+  background-color: var(--color-4);
+}
+
+.header-top h1 {
+  white-space: nowrap;
+}
+
+.footer-bar {
+  background-color: var(--color-3);
+}
+
+/* Componentes Comunes */
+.logo-box {
+  background-color: none;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.logo-img {
+  height: 50px;
+  width: auto;
+  display: block;
+}
+
+.search-bar-wrapper {
+  position: relative;
+}
+
+.search-bar-wrapper .form-control {
+  padding-right: 2.5rem;
+  border: none;
+}
+
+.search-bar-wrapper .form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgba(113, 97, 239, 0.25);
+}
+
+.search-bar-wrapper .bi-search {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-1);
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.header-icons i {
+  color: var(--color-1);
+}
+
+/* Sección Hero */
+.hero-banner {
+  background-color: var(--color-1);
+  border-radius: 12px;
+  min-height: 220px;
+  height: 100%;
+  width: 100%;
+}
+
+/* Tarjetas de Producto */
+.section-title {
+  color: #333;
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.scroll-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 1.25rem;
+  padding-bottom: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-2) rgba(255, 255, 255, 0.3);
+}
+
+.scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: var(--color-2);
+  border-radius: 10px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.product-card {
+  background-color: var(--color-1);
+  color: white;
+  border-radius: 12px;
+  padding: 15px;
+  min-width: 160px;
+  max-width: 160px;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s;
+  border: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-card:focus-visible {
+  outline: 3px solid var(--color-2);
+  outline-offset: 3px;
+}
+
+.product-img-wrapper {
+  background-color: var(--color-5);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-img-wrapper img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.product-card h6 {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.product-card small {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+/* Navegación Móvil Inferior */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--color-3);
+  display: flex;
+  justify-content: space-around;
+  padding: 15px 0;
+  z-index: 1030;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.mobile-bottom-nav i {
+  font-size: 1.6rem;
+  color: var(--color-1);
+}
+
+/* Estilos de Modal */
+.modal-content {
+  background-color: var(--color-5);
+}
+.modal-header {
+  border-bottom: 2px solid var(--color-2);
+}
+.modal-footer {
+  border-top: 2px solid var(--color-2);
+}
+.badge-disponibilidad {
+  background-color: var(--color-1);
+}
+
+/* Estilos para el enlace de "Explorar más" */
+.link-explorar {
+  color: var(--color-1);
+  font-weight: 600;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.link-explorar:hover {
+  color: var(--color-2);
+  transform: translateX(5px); /* Pequeña animación hacia la derecha al pasar el mouse */
+}
+
+/* Ajustes exclusivos para Desktop (Computadora) */
+@media (min-width: 992px) {
+  /* Ocultar el scroll y evitar que se hagan múltiples líneas */
+  .scroll-container {
+    overflow: hidden;
+    flex-wrap: nowrap;
+  }
+
+  /* Agrandar las tarjetas de producto */
+  .product-card {
+    min-width: 240px; /* Antes era 160px */
+    max-width: 240px;
+  }
+
+  /* Agrandar el contenedor de la imagen para mantener la proporción */
+  .product-img-wrapper {
+    height: 180px; /* Antes era 120px */
+  }
+}
+
+.hero-banner {
+  overflow: hidden;
+  border-radius: 12px;
+  min-height: 220px;
+}
+
+.hero-banner img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+/*Evitar que el badge del panel admin desborde el header en mobile*/
+.mobile-header .flex-grow-1 {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mobile-header .badge {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==========================
+   Botón de usuario
+========================== */
+
+.user-pill,
+.cart-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 8px 14px;
+
+  border-radius: 999px;
+
+  background: white;
+
+  border: 2px solid transparent;
+
+  color: var(--color-1);
+
+  transition: all 0.25s ease;
+}
+
+.cart-pill,
+.mobile-user-card {
+  position: relative;
+}
+
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 1.35rem;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+.mobile-user-card .cart-count {
+  top: 8px;
+  right: 8px;
+}
+
+.cart-product {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 240px;
+}
+
+.cart-product img {
+  width: 58px;
+  height: 58px;
+  padding: 4px;
+  object-fit: contain;
+  border-radius: 8px;
+  background-color: var(--color-5);
+}
+
+.cart-quantity {
+  min-width: 120px;
+  max-width: 140px;
+}
+
+.cart-quantity .form-control {
+  background-color: white;
+}
+
+.user-pill:hover,
+.cart-pill:hover {
+  background: var(--color-4);
+
+  border-color: var(--color-2);
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar {
+  width: 42px;
+
+  height: 42px;
+
+  border-radius: 50%;
+
+  background: linear-gradient(135deg, var(--color-2), var(--color-1));
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  flex-shrink: 0;
+}
+
+.user-avatar i {
+  color: white;
+
+  font-size: 1.3rem;
+}
+
+.user-text {
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  line-height: 1.15;
+}
+
+.user-name {
+  font-size: 0.82rem;
+
+  color: #666;
+}
+
+.user-name span {
+  color: #222;
+
+  font-weight: 700;
+}
+
+.user-account {
+  font-size: 0.78rem;
+
+  font-weight: 600;
+
+  color: var(--color-1);
+}
+
+.cart-icon {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  background: linear-gradient(135deg, var(--color-2), var(--color-1));
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cart-icon i {
+  color: white;
+  font-size: 1.25rem;
+}
+
+.cart-pill {
+  width: 58px;
+  height: 58px;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+/* ==========================================
+   Mi Cuenta
+========================================== */
+
+.perfil-avatar {
+  width: 90px;
+
+  height: 90px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  background: linear-gradient(135deg, var(--color-2), var(--color-1));
+}
+
+.perfil-avatar i {
+  color: white;
+
+  font-size: 2.8rem;
+}
+
+.card {
+  transition: 0.25s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* ======================================
+   Usuario móvil
+====================================== */
+
+.mobile-user-card {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 14px;
+
+  border-radius: 18px;
+
+  background: white;
+
+  color: #333;
+
+  transition: 0.25s;
+
+  border: 1px solid #ececec;
+}
+
+.mobile-user-card:hover {
+  background: var(--color-4);
+
+  color: #000;
+}
+
+.mobile-user-avatar {
+  width: 48px;
+
+  height: 48px;
+
+  border-radius: 50%;
+
+  background: linear-gradient(135deg, var(--color-2), var(--color-1));
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  color: white;
+
+  font-size: 1.4rem;
+}
+
+.mobile-user-title {
+  font-weight: 700;
+
+  font-size: 0.95rem;
+}
+
+.mobile-user-info small {
+  font-size: 0.75rem;
+}
+
+.modal-product-image {
+  max-width: 200px;
+  height: 200px;
+}
+
+.auth-page {
+  min-height: 100vh;
+}
+
+.auth-logo {
+  width: 120px;
+}
+
+.overlay-open,
+.modal-open {
+  overflow: hidden;
+}
+
+.offcanvas {
+  background-color: var(--color-5);
+}
+
+.offcanvas.show {
+  transform: none;
+}
+
+.nav-link.router-link-active {
+  font-weight: 700;
+}
+
+@media (max-width: 991.98px) {
+  .mobile-header .logo-box {
+    padding: 0;
+    margin-right: 0 !important;
+    flex-shrink: 0;
+  }
+
+  .mobile-header .logo-img {
+    height: 44px;
+    max-width: 92px;
+  }
+
+  .mobile-header .search-bar-wrapper {
+    min-width: 0;
+  }
+
+  .perfil-avatar {
+    width: 68px;
+    height: 68px;
+    flex-shrink: 0;
+  }
+
+  .perfil-avatar i {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .mobile-header {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  .mobile-header .d-flex {
+    gap: 0.6rem !important;
+  }
+
+  .mobile-header .logo-img {
+    max-width: 76px;
+  }
+
+  .product-card {
+    min-width: 160px;
+    max-width: 160px;
+  }
+}

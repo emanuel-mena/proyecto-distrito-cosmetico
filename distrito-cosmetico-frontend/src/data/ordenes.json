@@ -1,0 +1,48 @@
+[
+  {
+    "id": 1001,
+    "cliente": "María Fernández",
+    "correo": "maria.fernandez@example.com",
+    "telefono": "8888-1234",
+    "direccion": "San José, Curridabat, Residencial Los Colegios, casa 12B",
+    "fecha": "2026-07-28",
+    "productos": [
+      {
+        "nombre": "Sérum Hidratante Ácido Hialurónico",
+        "cantidad": 1,
+        "precio": 15000,
+        "disponible": true
+      },
+      { "nombre": "Base de Maquillaje Mate", "cantidad": 2, "precio": 18500, "disponible": true }
+    ],
+    "total": 52000,
+    "estado": "Entregado"
+  },
+  {
+    "id": 1002,
+    "cliente": "Carlos Rojas",
+    "correo": "carlos.rojas@example.com",
+    "telefono": "8777-5678",
+    "direccion": "Alajuela, Centro, 200m norte de la Catedral",
+    "fecha": "2026-07-30",
+    "productos": [
+      { "nombre": "Perfume Floral Esencia", "cantidad": 1, "precio": 22000, "disponible": true }
+    ],
+    "total": 22000,
+    "estado": "En camino"
+  },
+  {
+    "id": 1003,
+    "cliente": "Ana Gómez",
+    "correo": "ana.gomez@example.com",
+    "telefono": "8666-9012",
+    "direccion": "Cartago, Tres Ríos, del Más x Menos 300m sur",
+    "fecha": "2026-08-01",
+    "productos": [
+      { "nombre": "Shampoo Sólido Ecológico", "cantidad": 3, "precio": 8500, "disponible": true },
+      { "nombre": "Crema de Manos Karité", "cantidad": 1, "precio": 6000, "disponible": false }
+    ],
+    "total": 31500,
+    "estado": "Pendiente"
+  }
+]

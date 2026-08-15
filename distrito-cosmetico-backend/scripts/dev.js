@@ -4,7 +4,7 @@ const path = require("path");
 const backendRoot = path.resolve(__dirname, "..");
 const frontendRoot = path.resolve(
   backendRoot,
-  "../distrito-cosmetico-frontend/PrograWebA-Proyecto",
+  "../distrito-cosmetico-frontend",
 );
 const npmCli =
   process.env.npm_execpath ||
