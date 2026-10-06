@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SonarLintProjectSettings">
+    <option name="fileExclusions">
+      <list>
+        <option value="DIRECTORY:node_modules" />
+        <option value="DIRECTORY:public" />
+        <option value="DIRECTORY:distrito-cosmetico-frontend/node_modules" />
+        <option value="DIRECTORY:distrito-cosmetico-frontend/dist" />
+      </list>
+    </option>
+  </component>
+</project>
