@@ -1,8 +1,8 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 const User = require("../models/User");
 const Category = require("../models/Category");
 const Product = require("../models/Product");

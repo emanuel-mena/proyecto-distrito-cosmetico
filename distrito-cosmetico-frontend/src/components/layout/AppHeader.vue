@@ -192,15 +192,18 @@ onBeforeUnmount(() => {
   </header>
 
   <Teleport to="body">
-    <div v-if="menuOpen" class="offcanvas-backdrop fade show" @click="closeMenu"></div>
-    <aside
+    <div
+      v-if="menuOpen"
+      class="offcanvas-backdrop fade show"
+      @click="closeMenu"
+    ></div>
+
+    <dialog
       id="mobileOffcanvasMenu"
       class="offcanvas offcanvas-end d-lg-none"
       :class="{ show: menuOpen }"
       :style="{ visibility: menuOpen ? 'visible' : 'hidden' }"
-      tabindex="-1"
-      role="dialog"
-      aria-modal="true"
+      :open="menuOpen"
       aria-labelledby="mobileMenuTitle"
     >
       <div class="offcanvas-header border-bottom">

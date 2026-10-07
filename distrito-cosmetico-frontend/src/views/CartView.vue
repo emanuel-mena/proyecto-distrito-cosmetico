@@ -184,6 +184,7 @@ const checkout = async () => {
               id="checkoutPhone"
               v-model.trim="delivery.telefono"
               class="form-control app-input"
+              type="tel"
               autocomplete="tel"
               required
             />
@@ -194,6 +195,7 @@ const checkout = async () => {
               id="checkoutAddress"
               v-model.trim="delivery.direccion"
               class="form-control app-input"
+              type="text"
               autocomplete="street-address"
               required
             />
@@ -212,9 +214,7 @@ const checkout = async () => {
           <i class="bi bi-lock-fill" aria-hidden="true"></i>
           {{ checkoutLoading ? 'Procesando...' : 'Finalizar compra' }}
         </button>
-        <button type="button" class="cart-clear-action" @click="emptyCart">
-          Vaciar carrito
-        </button>
+        <button type="button" class="cart-clear-action" @click="emptyCart">Vaciar carrito</button>
       </aside>
     </div>
   </main>

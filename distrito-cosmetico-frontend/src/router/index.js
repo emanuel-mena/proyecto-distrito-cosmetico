@@ -149,10 +149,8 @@ router.beforeEach((to) => {
 })
 
 router.afterEach((to) => {
-  document.title =
-    to.name === 'inicio'
-      ? 'Distrito Cosmético'
-      : `${to.meta.title || 'Distrito Cosmético'} | Distrito Cosmético`
+  const pageTitle = typeof to.meta.title === 'string' ? to.meta.title : 'Distrito Cosmético'
+  document.title = to.name === 'inicio' ? 'Distrito Cosmético' : `${pageTitle} | Distrito Cosmético`
 })
 
 export default router

@@ -15,16 +15,16 @@ const imageFallback = (event) => {
 </script>
 
 <template>
-  <article
+  <button
+    type="button"
     class="product-card"
-    :class="{ 'product-card--unavailable': !product.disponible || product.stock <= 0 }"
-    tabindex="0"
-    role="button"
+    :class="{
+    'product-card--unavailable':
+      !product.disponible || product.stock <= 0
+  }"
     :aria-label="`Ver ${product.nombre}`"
     @click="emit('select', product)"
-    @keydown.enter="emit('select', product)"
-    @keydown.space.prevent="emit('select', product)"
-  >
+  </button>
     <div class="product-img-wrapper">
       <img :src="assetUrl(product.imagen)" :alt="product.nombre" @error="imageFallback" />
       <span v-if="!product.disponible || product.stock <= 0" class="product-stock-badge">

@@ -57,10 +57,11 @@ const selectProduct = async (product) => {
       :title="heading"
       :description="route.meta.description || 'Explora nuestros productos.'"
     />
-    <div v-if="catalog.loading" class="loading-state" role="status">
+    <output v-if="catalog.loading" class="loading-state">
       <span class="loading-spinner" aria-hidden="true"></span>
+
       <span>Cargando productos...</span>
-    </div>
+    </output>
     <div v-else-if="catalog.error" class="app-status-banner app-status-banner--danger">
       <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>{{ catalog.error }}
     </div>

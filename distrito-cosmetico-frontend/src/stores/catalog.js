@@ -27,7 +27,8 @@ export const useCatalogStore = defineStore('catalog', () => {
     error.value = ''
     try {
       const params = new URLSearchParams(query)
-      const result = await api(`/products${params.size ? `?${params}` : ''}`)
+      const query = params.size ? `?${params}` : ''
+      const result = await api(`/products${query}`)
       products.value = result.data.map(normalizeProduct)
     } catch (cause) {
       error.value = cause.message
@@ -41,9 +42,13 @@ export const useCatalogStore = defineStore('catalog', () => {
   }
 
   async function getDetails(id) {
-    const result = await api(`/products/${id}`)
-    return normalizeProduct(result.data)
+    const result = await api(`/orders/${id}`)
+    return normalizeOrder(result.data)
   }
+
+  onMounted(async () => {
+    await getDetails(orderId)
+  })
 
   async function saveProduct(input) {
     const editing = Boolean(input._id || input.id)

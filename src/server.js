@@ -2,8 +2,8 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
-const fs = require("fs");
+const path = require("node:path");
+const fs = require("node:fs");
 const connectDB = require("./config/db");
 const { notFound, errorHandler } = require("./middlewares/error");
 const authRoutes = require("./routes/auth.routes");
@@ -14,6 +14,8 @@ const orderRoutes = require("./routes/order.routes");
 const currencyRoutes = require("./routes/currency.routes");
 
 const app = express();
+
+app.disable("x-powered-by");
 
 app.use(express.json());
 app.use(cors({ origin: process.env.CORS_ORIGIN || true }));

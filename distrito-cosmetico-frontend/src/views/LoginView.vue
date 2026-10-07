@@ -21,7 +21,33 @@ const registerErrors = reactive({
 const loginForm = reactive({ correo: '', password: '' })
 const registerForm = reactive({ nombre: '', correo: '', password: '', confirmation: '' })
 
-const validEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+const validEmail = (email) => {
+  const atIndex = email.indexOf('@')
+
+  if (atIndex <= 0 || atIndex === email.length - 1) {
+    return false
+  }
+
+  const domain = email.slice(atIndex + 1)
+
+  return domain.includes('.') &&
+    !domain.startsWith('.') &&
+    !domain.endsWith('.') &&
+    !domain.includes('..')
+}const validEmail = (email) => {
+  const atIndex = email.indexOf('@')
+
+  if (atIndex <= 0 || atIndex === email.length - 1) {
+    return false
+  }
+
+  const domain = email.slice(atIndex + 1)
+
+  return domain.includes('.') &&
+    !domain.startsWith('.') &&
+    !domain.endsWith('.') &&
+    !domain.includes('..')
+}
 
 const submitLogin = async () => {
   message.value = null
@@ -83,7 +109,7 @@ const submitRegister = async () => {
                 <p>Tu espacio de belleza y cuidado personal</p>
               </div>
 
-              <ul class="auth-tabs" role="tablist">
+              <div class="auth-tabs" role="tablist">
                 <li class="nav-item">
                   <button
                     type="button"
@@ -96,7 +122,7 @@ const submitRegister = async () => {
                     Iniciar Sesión
                   </button>
                 </li>
-                <li class="nav-item">
+                <div class="nav-item">
                   <button
                     type="button"
                     class="nav-link"
@@ -107,8 +133,8 @@ const submitRegister = async () => {
                   >
                     Registrarse
                   </button>
-                </li>
-              </ul>
+                </div>
+              </div>
 
               <div
                 v-if="message"
@@ -143,7 +169,11 @@ const submitRegister = async () => {
                   />
                   <div class="invalid-feedback">La contraseña es obligatoria.</div>
                 </div>
-                <button type="submit" class="btn-app btn-app-primary w-100" :disabled="auth.loading">
+                <button
+                  type="submit"
+                  class="btn-app btn-app-primary w-100"
+                  :disabled="auth.loading"
+                >
                   {{ auth.loading ? 'Ingresando...' : 'Iniciar Sesión' }}
                 </button>
               </form>
@@ -199,13 +229,19 @@ const submitRegister = async () => {
                   />
                   <div class="invalid-feedback">Las contraseñas no coinciden.</div>
                 </div>
-                <button type="submit" class="btn-app btn-app-primary w-100" :disabled="auth.loading">
+                <button
+                  type="submit"
+                  class="btn-app btn-app-primary w-100"
+                  :disabled="auth.loading"
+                >
                   {{ auth.loading ? 'Creando...' : 'Crear cuenta' }}
                 </button>
               </form>
 
               <div class="auth-return">
-                <RouterLink to="/"><i class="bi bi-arrow-left" aria-hidden="true"></i>Volver a la tienda</RouterLink>
+                <RouterLink to="/"
+                  ><i class="bi bi-arrow-left" aria-hidden="true"></i>Volver a la tienda</RouterLink
+                >
               </div>
             </div>
           </div>

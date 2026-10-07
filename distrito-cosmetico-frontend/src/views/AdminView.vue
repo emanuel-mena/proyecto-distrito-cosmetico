@@ -93,7 +93,7 @@ const viewOrder = async (order) => {
       <p class="lead text-muted">Gestiona productos, inventario y órdenes.</p>
     </div>
 
-    <ul class="nav nav-tabs mb-4" role="tablist">
+    <ul class="nav nav-tabs mb-4">
       <li class="nav-item">
         <button
           type="button"
@@ -105,6 +105,7 @@ const viewOrder = async (order) => {
           Productos
         </button>
       </li>
+
       <li class="nav-item">
         <button
           type="button"
@@ -116,6 +117,7 @@ const viewOrder = async (order) => {
           Categorías
         </button>
       </li>
+
       <li class="nav-item">
         <button
           type="button"

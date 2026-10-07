@@ -16,15 +16,16 @@ const iconFor = (type) =>
 <template>
   <Teleport to="body">
     <div class="toast-region" aria-live="polite" aria-atomic="true">
-      <div
+      <output
         v-for="notification in feedback.notifications"
         :key="notification.id"
         class="app-toast"
         :class="`app-toast--${notification.type}`"
-        role="status"
       >
         <i class="bi" :class="iconFor(notification.type)" aria-hidden="true"></i>
+
         <span>{{ notification.message }}</span>
+
         <button
           type="button"
           class="app-toast-close"
@@ -33,7 +34,7 @@ const iconFor = (type) =>
         >
           <i class="bi bi-x-lg" aria-hidden="true"></i>
         </button>
-      </div>
+      </output>
     </div>
   </Teleport>
 
