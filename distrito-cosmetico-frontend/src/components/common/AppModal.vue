@@ -8,29 +8,13 @@ const props = defineProps({
 })
 const emit = defineEmits(['close'])
 const closeButton = ref(null)
-const modalPanel = ref(null)
+const dialog = ref(null)
 let previousFocus = null
 
 const close = () => emit('close')
-const onKeydown = (event) => {
-  if (event.key === 'Escape' && props.open) close()
-}
-
-const trapFocus = (event) => {
-  if (event.key !== 'Tab') return
-  const focusable = modalPanel.value?.querySelectorAll(
-    'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
-  )
-  if (!focusable?.length) return
-  const first = focusable[0]
-  const last = focusable[focusable.length - 1]
-  if (event.shiftKey && document.activeElement === first) {
-    event.preventDefault()
-    last.focus()
-  } else if (!event.shiftKey && document.activeElement === last) {
-    event.preventDefault()
-    first.focus()
-  }
+const onCancel = (event) => {
+  event.preventDefault()
+  close()
 }
 
 watch(
@@ -40,50 +24,67 @@ watch(
       previousFocus = document.activeElement
       document.body.classList.add('modal-open')
       await nextTick()
-      closeButton.value?.focus()
+      if (props.open && dialog.value && !dialog.value.open) {
+        dialog.value.showModal()
+        closeButton.value?.focus()
+      }
     } else {
+      if (dialog.value?.open) dialog.value.close()
       document.body.classList.remove('modal-open')
       previousFocus?.focus?.()
     }
   },
+  { immediate: true },
 )
 
-window.addEventListener('keydown', onKeydown)
 onBeforeUnmount(() => {
   document.body.classList.remove('modal-open')
-  window.removeEventListener('keydown', onKeydown)
+  if (dialog.value?.open) dialog.value.close()
 })
 </script>
 
 <template>
   <Teleport to="body">
-    <div v-if="open">
-      <div class="modal-backdrop fade show"></div>
-      <div
-        class="modal fade show"
-        tabindex="-1"
-        role="dialog"
-        aria-modal="true"
-        :aria-labelledby="labelledBy"
-        style="display: block"
-        @mousedown.self="close"
-      >
-        <div class="modal-dialog modal-dialog-centered" :class="size">
-          <div ref="modalPanel" class="modal-content border-0 shadow" @keydown="trapFocus">
-            <div class="modal-header header-top text-dark">
-              <slot name="title"></slot>
-              <button
-                ref="closeButton"
-                type="button"
-                class="btn-close"
-                aria-label="Cerrar"
-                @click="close"
-              ></button>
-            </div>
-            <slot></slot>
+    <dialog
+      v-if="open"
+      ref="dialog"
+      class="modal fade show app-modal-dialog"
+      :aria-labelledby="labelledBy"
+      @cancel="onCancel"
+      @mousedown.self="close"
+    >
+      <div class="modal-dialog modal-dialog-centered" :class="size">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header header-top text-dark">
+            <slot name="title"></slot>
+            <button
+              ref="closeButton"
+              type="button"
+              class="btn-close"
+              aria-label="Cerrar"
+              @click="close"
+            ></button>
           </div>
+          <slot></slot>
         </div>
       </div>
-    </div>
+    </dialog>
   </Teleport>
 </template>
+
+<style scoped>
+.app-modal-dialog {
+  display: block;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.app-modal-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+</style>
