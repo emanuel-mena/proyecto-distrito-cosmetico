@@ -57,36 +57,33 @@ onBeforeUnmount(() => {
 
 <template>
   <Teleport to="body">
-    <div
-      v-if="menuOpen"
-      class="offcanvas-backdrop fade show"
-      @click="closeMenu"
-    ></div>
-
-    <dialog
-      id="mobileOffcanvasMenu"
-      class="offcanvas offcanvas-end d-lg-none"
-      :class="{ show: menuOpen }"
-      :style="{ visibility: menuOpen ? 'visible' : 'hidden' }"
-      tabindex="-1"
-      aria-modal="true"
-      aria-labelledby="mobileMenuTitle"
-    >
-      <div class="modal-dialog modal-dialog-centered" :class="size">
-        <div ref="modalPanel" class="modal-content border-0 shadow" @keydown="trapFocus">
-          <div class="modal-header header-top text-dark">
-            <slot name="title"></slot>
-            <button
-              ref="closeButton"
-              type="button"
-              class="btn-close"
-              aria-label="Cerrar"
-              @click="close"
-            ></button>
+    <div v-if="open">
+      <div class="modal-backdrop fade show"></div>
+      <div
+        class="modal fade show"
+        tabindex="-1"
+        role="dialog"
+        aria-modal="true"
+        :aria-labelledby="labelledBy"
+        style="display: block"
+        @mousedown.self="close"
+      >
+        <div class="modal-dialog modal-dialog-centered" :class="size">
+          <div ref="modalPanel" class="modal-content border-0 shadow" @keydown="trapFocus">
+            <div class="modal-header header-top text-dark">
+              <slot name="title"></slot>
+              <button
+                ref="closeButton"
+                type="button"
+                class="btn-close"
+                aria-label="Cerrar"
+                @click="close"
+              ></button>
+            </div>
+            <slot></slot>
           </div>
-          <slot></slot>
         </div>
       </div>
-    </dialog>
+    </div>
   </Teleport>
 </template>
