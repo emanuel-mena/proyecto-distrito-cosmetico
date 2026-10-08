@@ -12,6 +12,11 @@ const normalizeOrder = (order) => ({
   total: Number(order.total) || 0,
 })
 
+async function getOrderDetails(id) {
+  const result = await api(`/orders/${id}`)
+  return normalizeOrder(result.data)
+}
+
 export const useOrdersStore = defineStore('orders', () => {
   const orders = ref([])
   const loading = ref(false)
@@ -42,11 +47,6 @@ export const useOrdersStore = defineStore('orders', () => {
     }
   }
 
-  async function getDetails(id) {
-    const result = await api(`/orders/${id}`)
-    return normalizeOrder(result.data)
-  }
-
   async function createOrder(details) {
     const result = await api('/orders', { method: 'POST', body: details })
     const order = normalizeOrder(result.data)
@@ -64,5 +64,14 @@ export const useOrdersStore = defineStore('orders', () => {
     if (index >= 0) orders.value[index] = updated
   }
 
-  return { orders, loading, error, loadAll, loadForUser, getDetails, createOrder, updateStatus }
+  return {
+    orders,
+    loading,
+    error,
+    loadAll,
+    loadForUser,
+    getDetails: getOrderDetails,
+    createOrder,
+    updateStatus,
+  }
 })

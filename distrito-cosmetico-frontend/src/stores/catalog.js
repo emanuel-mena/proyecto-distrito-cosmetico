@@ -16,6 +16,11 @@ export const normalizeProduct = (product) => ({
   stock: Math.max(0, Math.floor(Number(product.stock) || 0)),
 })
 
+async function getProductDetails(id) {
+  const result = await api(`/products/${id}`)
+  return normalizeProduct(result.data)
+}
+
 export const useCatalogStore = defineStore('catalog', () => {
   const products = ref([])
   const searchQuery = ref('')
@@ -27,8 +32,8 @@ export const useCatalogStore = defineStore('catalog', () => {
     error.value = ''
     try {
       const params = new URLSearchParams(query)
-      const query = params.size ? `?${params}` : ''
-      const result = await api(`/products${query}`)
+      const queryString = params.size ? `?${params}` : ''
+      const result = await api(`/products${queryString}`)
       products.value = result.data.map(normalizeProduct)
     } catch (cause) {
       error.value = cause.message
@@ -39,11 +44,6 @@ export const useCatalogStore = defineStore('catalog', () => {
 
   function findById(id) {
     return products.value.find((product) => product.id === Number(id) || product._id === String(id))
-  }
-
-  async function getDetails(id) {
-    const result = await api(`/products/${id}`)
-    return normalizeProduct(result.data)
   }
 
   async function saveProduct(input) {
@@ -75,7 +75,7 @@ export const useCatalogStore = defineStore('catalog', () => {
     error,
     load,
     findById,
-    getDetails,
+    getDetails: getProductDetails,
     saveProduct,
     deleteProduct,
   }
