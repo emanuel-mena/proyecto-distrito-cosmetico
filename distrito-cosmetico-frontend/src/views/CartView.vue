@@ -185,7 +185,7 @@ const checkout = async () => {
               v-model.trim="delivery.telefono"
               class="form-control app-input"
               type="tel"
-              autocomplete="tel"
+              autocomplete="shipping tel"
               required
             />
           </div>
@@ -196,7 +196,7 @@ const checkout = async () => {
               v-model.trim="delivery.direccion"
               class="form-control app-input"
               type="text"
-              autocomplete="street-address"
+              autocomplete="shipping street-address"
               required
             />
           </div>

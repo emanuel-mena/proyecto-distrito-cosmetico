@@ -321,6 +321,6 @@ onBeforeUnmount(() => {
           </li>
         </ul>
       </div>
-    </aside>
+    </dialog>
   </Teleport>
 </template>

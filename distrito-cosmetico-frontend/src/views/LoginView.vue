@@ -34,19 +34,6 @@ const validEmail = (email) => {
     !domain.startsWith('.') &&
     !domain.endsWith('.') &&
     !domain.includes('..')
-}const validEmail = (email) => {
-  const atIndex = email.indexOf('@')
-
-  if (atIndex <= 0 || atIndex === email.length - 1) {
-    return false
-  }
-
-  const domain = email.slice(atIndex + 1)
-
-  return domain.includes('.') &&
-    !domain.startsWith('.') &&
-    !domain.endsWith('.') &&
-    !domain.includes('..')
 }
 
 const submitLogin = async () => {

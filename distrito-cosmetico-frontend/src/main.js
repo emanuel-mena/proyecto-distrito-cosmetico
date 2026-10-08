@@ -23,6 +23,9 @@ const categories = useCategoriesStore(pinia)
 const currency = useCurrencyStore(pinia)
 const cart = useCartStore(pinia)
 
-Promise.all([catalog.load(), categories.load(), currency.setCurrency(currency.currency)]).then(() =>
-  cart.load(),
-)
+const initialize = async () => {
+  await Promise.all([catalog.load(), categories.load(), currency.setCurrency(currency.currency)])
+  await cart.load()
+}
+
+await initialize()

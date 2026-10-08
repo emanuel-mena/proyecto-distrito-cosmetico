@@ -42,13 +42,9 @@ export const useCatalogStore = defineStore('catalog', () => {
   }
 
   async function getDetails(id) {
-    const result = await api(`/orders/${id}`)
-    return normalizeOrder(result.data)
+    const result = await api(`/products/${id}`)
+    return normalizeProduct(result.data)
   }
-
-  onMounted(async () => {
-    await getDetails(orderId)
-  })
 
   async function saveProduct(input) {
     const editing = Boolean(input._id || input.id)

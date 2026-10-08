@@ -69,26 +69,24 @@ onBeforeUnmount(() => {
       :class="{ show: menuOpen }"
       :style="{ visibility: menuOpen ? 'visible' : 'hidden' }"
       tabindex="-1"
-      role="dialog"
       aria-modal="true"
       aria-labelledby="mobileMenuTitle"
     >
-        <div class="modal-dialog modal-dialog-centered" :class="size">
-          <div ref="modalPanel" class="modal-content border-0 shadow" @keydown="trapFocus">
-            <div class="modal-header header-top text-dark">
-              <slot name="title"></slot>
-              <button
-                ref="closeButton"
-                type="button"
-                class="btn-close"
-                aria-label="Cerrar"
-                @click="close"
-              ></button>
-            </div>
-            <slot></slot>
+      <div class="modal-dialog modal-dialog-centered" :class="size">
+        <div ref="modalPanel" class="modal-content border-0 shadow" @keydown="trapFocus">
+          <div class="modal-header header-top text-dark">
+            <slot name="title"></slot>
+            <button
+              ref="closeButton"
+              type="button"
+              class="btn-close"
+              aria-label="Cerrar"
+              @click="close"
+            ></button>
           </div>
+          <slot></slot>
         </div>
       </div>
-    </div>
+    </dialog>
   </Teleport>
 </template>
