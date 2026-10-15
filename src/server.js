@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("node:path");
 const fs = require("node:fs");
+const { jwtSecret } = require("./utils/jwt");
 const connectDB = require("./config/db");
 const { notFound, errorHandler } = require("./middlewares/error");
 const authRoutes = require("./routes/auth.routes");
@@ -17,8 +18,15 @@ const app = express();
 
 app.disable("x-powered-by");
 
-app.use(express.json());
-app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
+app.use(express.json({ limit: "32kb" }));
+const allowedOrigins = (process.env.CORS_ORIGIN || "").split(",").map((s) => s.trim()).filter(Boolean);
+app.use(cors({ origin: allowedOrigins }));
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("X-Frame-Options", "DENY");
+  next();
+});
 
 app.get("/api/health", (req, res) =>
   res.json({ ok: true, service: "distrito-cosmetico-backend" }),
@@ -50,6 +58,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 3000;
 
 const start = async () => {
+  jwtSecret();
   await connectDB();
   app.listen(PORT, () => {
     console.log(`Servidor ejecutándose en http://localhost:${PORT}`);

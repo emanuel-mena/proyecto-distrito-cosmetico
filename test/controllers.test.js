@@ -1,5 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+process.env.JWT_SECRET = "test-secret-with-at-least-thirty-two-characters";
 
 const authController = require("../src/controllers/auth.controller");
 const cartController = require("../src/controllers/cart.controller");

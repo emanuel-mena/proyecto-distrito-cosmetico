@@ -66,6 +66,8 @@ exports.create = async (req, res, next) => {
     const products = [];
     let total = 0;
     for (const i of cart.items) {
+      if (!Number.isSafeInteger(i.cantidad) || i.cantidad < 1)
+        throw httpError(400, "Cantidad inválida en el carrito");
       if (!i.producto?._id)
         throw httpError(
           409,

@@ -102,15 +102,15 @@ npm ci
 npm --prefix distrito-cosmetico-frontend ci
 ```
 
-Copie `.env.example` como `.env` y cambie al menos `JWT_SECRET`. Las credenciales incluidas son únicamente valores de desarrollo.
+Copie `.env.example` como `.env` y configure un `JWT_SECRET` aleatorio de al menos 32 caracteres. Para ejecutar el seed, configure también `ADMIN_PASSWORD` con al menos 12 caracteres.
 
 ```dotenv
 MONGODB_URI=mongodb://127.0.0.1:27017/distrito-cosmetico
-JWT_SECRET=cambie-este-secreto-en-produccion
+JWT_SECRET=
 PORT=3000
 CORS_ORIGIN=http://localhost:5173
 ADMIN_EMAIL=admin@distritocosmetico.com
-ADMIN_PASSWORD=Admin123456
+ADMIN_PASSWORD=
 ```
 
 Variables disponibles:
@@ -118,11 +118,11 @@ Variables disponibles:
 | Variable | Uso | Valor predeterminado |
 | --- | --- | --- |
 | `MONGODB_URI` | Conexión a MongoDB. | Sin valor seguro; debe configurarse. |
-| `JWT_SECRET` | Firma y verificación de sesiones JWT. | `dev-secret` solo como respaldo local. |
+| `JWT_SECRET` | Firma y verificación de sesiones JWT; obligatorio y de al menos 32 caracteres. | Ninguno. |
 | `PORT` | Puerto HTTP de Express. | `3000` |
-| `CORS_ORIGIN` | Origen permitido cuando frontend y backend se ejecutan separados. | Cualquier origen |
+| `CORS_ORIGIN` | Orígenes permitidos, separados por comas, cuando frontend y backend se ejecutan separados. | Ninguno; la SPA integrada usa el mismo origen. |
 | `ADMIN_EMAIL` | Correo del administrador creado por el seed. | `admin@distritocosmetico.com` |
-| `ADMIN_PASSWORD` | Contraseña del administrador creado por el seed. | `Admin123456` |
+| `ADMIN_PASSWORD` | Contraseña del administrador creado por el seed; mínimo 12 caracteres. | Ninguno. |
 | `VITE_API_BASE_URL` | Base de la API para un frontend desplegado por separado. | `/api` |
 
 ## Datos iniciales
@@ -133,7 +133,7 @@ Con MongoDB disponible y `.env` configurado:
 npm run seed
 ```
 
-El seed es idempotente: crea o actualiza el administrador, las categorías, los productos y las órdenes de demostración a partir de los JSON del frontend. También crea los clientes asociados a esas órdenes.
+El seed es idempotente: crea o actualiza el administrador, las categorías, los productos y las órdenes de demostración a partir de los JSON del frontend. También crea los clientes asociados a esas órdenes con contraseñas aleatorias no divulgadas.
 
 ## Ejecución en desarrollo
 
@@ -219,6 +219,9 @@ El backend consume `@fawazahmed0/currency-api` mediante dos orígenes públicos.
 - Las contraseñas se almacenan con hash bcrypt.
 - El registro público fuerza el rol `cliente` aunque el cuerpo solicite otro rol.
 - JWT protege carrito, órdenes y operaciones administrativas.
+- El inicio de sesión y el registro tienen un límite de intentos por dirección IP; las solicitudes JSON están limitadas a 32 KB.
+- La búsqueda escapa caracteres de expresiones regulares y limita la longitud de los filtros.
+- CORS solo permite los orígenes configurados, y los errores internos no se devuelven al cliente.
 - El middleware `adminOnly` responde `403` ante permisos insuficientes.
 - Mongoose valida campos requeridos, valores mínimos, unicidad y estados permitidos.
 - Una categoría con productos asociados no se puede eliminar.
@@ -233,7 +236,7 @@ npm --prefix distrito-cosmetico-frontend run lint
 npm run build
 ```
 
-Actualmente hay 9 pruebas unitarias del backend. Cubren el rol seguro de registro, identificadores de producto, disponibilidad del carrito, integridad de categorías y validaciones/compensación de stock durante la creación de órdenes. `npm test` también verifica la sintaxis de los puntos de entrada y scripts.
+Las pruebas del backend cubren el rol seguro de registro, identificadores de producto, disponibilidad del carrito, integridad de categorías, validaciones/compensación de stock durante la creación de órdenes y controles de seguridad HTTP. `npm test` también verifica la sintaxis de los puntos de entrada y scripts.
 
 Las pruebas unitarias usan dobles de los modelos y no sustituyen una prueba de integración con una instancia real de MongoDB. La conversión de moneda también requiere acceso a Internet en tiempo de ejecución.
 

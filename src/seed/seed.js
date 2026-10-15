@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const fs = require("node:fs");
 const path = require("node:path");
+const { randomBytes } = require("node:crypto");
 const User = require("../models/User");
 const Category = require("../models/Category");
 const Product = require("../models/Product");
@@ -17,7 +18,9 @@ const read = (n) => JSON.parse(fs.readFileSync(path.join(root, n), "utf8"));
 (async () => {
   await mongoose.connect(process.env.MONGODB_URI);
   const adminEmail = process.env.ADMIN_EMAIL || "admin@distritocosmetico.com";
-  const adminPass = process.env.ADMIN_PASSWORD || "Admin123456";
+  const adminPass = process.env.ADMIN_PASSWORD;
+  if (!adminPass || adminPass.length < 12)
+    throw new Error("ADMIN_PASSWORD debe tener al menos 12 caracteres para ejecutar el seed");
   await User.updateOne(
     { correo: adminEmail },
     {
@@ -55,7 +58,7 @@ const read = (n) => JSON.parse(fs.readFileSync(path.join(root, n), "utf8"));
         $setOnInsert: {
           nombre: source.cliente,
           correo: source.correo,
-          password: await bcrypt.hash("Cliente123456", 10),
+          password: await bcrypt.hash(randomBytes(32).toString("hex"), 10),
           rol: "cliente",
         },
       },

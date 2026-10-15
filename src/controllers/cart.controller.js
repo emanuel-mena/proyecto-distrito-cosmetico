@@ -27,7 +27,7 @@ exports.get = async (req, res, next) => {
 exports.add = async (req, res, next) => {
   try {
     const p = await Product.findOne(productQuery(req.body.productId));
-    const qty = Number(req.body.cantidad || 1);
+    const qty = Number(req.body.cantidad ?? 1);
     if (!p)
       return res
         .status(404)
@@ -36,7 +36,7 @@ exports.add = async (req, res, next) => {
       return res
         .status(409)
         .json({ ok: false, error: "El producto no está disponible" });
-    if (qty < 1 || qty > p.stock)
+    if (!Number.isSafeInteger(qty) || qty < 1 || qty > p.stock)
       return res
         .status(400)
         .json({ ok: false, error: "Cantidad no disponible" });

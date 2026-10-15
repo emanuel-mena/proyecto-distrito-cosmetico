@@ -11,9 +11,16 @@ const identifierQuery = (value) => {
 exports.list = async (req, res, next) => {
   try {
     const q = {};
-    if (req.query.categoria) q.categoria = req.query.categoria;
-    if (req.query.search)
-      q.nombre = { $regex: req.query.search, $options: "i" };
+    if (req.query.categoria) {
+      if (typeof req.query.categoria !== "string" || req.query.categoria.length > 100)
+        return res.status(400).json({ ok: false, error: "Categoría inválida" });
+      q.categoria = req.query.categoria;
+    }
+    if (req.query.search) {
+      if (typeof req.query.search !== "string" || req.query.search.length > 100)
+        return res.status(400).json({ ok: false, error: "Búsqueda inválida" });
+      q.nombre = { $regex: req.query.search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" };
+    }
     const data = await Product.find(q).sort({ id: 1 });
     res.json({ ok: true, data });
   } catch (e) {

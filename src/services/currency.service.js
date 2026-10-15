@@ -7,7 +7,7 @@ exports.convert = async (amount, from, to) => {
   let last;
   for (const base of urls) {
     try {
-      const r = await fetch(`${base}/${code}.json`);
+      const r = await fetch(`${base}/${code}.json`, { signal: AbortSignal.timeout(5000) });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const data = await r.json();
       const rate = data[code]?.[String(to).toLowerCase()];
