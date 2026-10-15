@@ -8,6 +8,8 @@
     "build": "node scripts/build-frontend.js",
     "seed": "node src/seed/seed.js",
     "test:jmeter": "node scripts/run-jmeter.js",
+    "test:jmeter:rendimiento": "node scripts/run-jmeter-rendimiento.js",
+    "jmeter:rendimiento:generate": "node scripts/generate-jmeter-rendimiento.js",
     "jmeter:generate": "node scripts/generate-jmeter-plan.js",
     "dev": "node scripts/dev.js",
     "dev:api": "node --watch src/server.js",

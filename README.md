@@ -255,6 +255,26 @@ Si hay varias versiones de Java instaladas, configure `JMETER_JAVA_HOME` con la 
 
 Para ajustar el plan desde la interfaz de JMeter, abra `jmeter/distrito-cosmetico.jmx` y edite **Test Plan → User Defined Variables**. Allí están el host y puerto, las credenciales (tomadas del entorno por defecto), los IDs de productos del seed, los datos de pedido y la carga (`loadThreads`, `loadRampSeconds`, `loadDurationSeconds`, `targetRequestsPerMinute`). `npm run test:jmeter` usa esos valores del archivo; `npm run jmeter:generate` reconstruye el `.jmx` y restablece sus valores predeterminados.
 
+### Caso de estudio de rendimiento: cinco servicios
+
+El plan independiente [`jmeter/distrito-cosmetico-rendimiento.jmx`](jmeter/distrito-cosmetico-rendimiento.jmx) mide cinco servicios que cubren autenticación (`POST /api/auth/login`), categorías (`GET /api/categories`), búsqueda de productos (`GET /api/products?search`), carrito (`GET /api/cart`) y pedidos (`GET /api/orders`). El login ocurre una vez por usuario virtual para respetar el límite de 20 intentos cada 15 minutos. Las otras cuatro solicitudes se repiten durante la carga. Se extraen el token, ID del usuario, cantidades de categorías, productos, ítems del carrito y pedidos de las respuestas JSON. El plan valida HTTP 200 y `ok: true`.
+
+En **Test Plan → User Defined Variables** se configuran `apiProtocol`, `apiHost`, `apiPort`, `csvFile`, `loadThreads`, `loadRampSeconds`, `loadDurationSeconds` y `targetRequestsPerMinute`. El ejecutor aislado admite entre 1 y 20 hilos por el límite de login de la API. Los insumos por usuario (`correo,password,searchTerm`) se leen mediante **CSV Data Set Config**; [`jmeter/rendimiento-insumos.csv`](jmeter/rendimiento-insumos.csv) es una plantilla para ejecución manual y debe llevar credenciales válidas antes de usarse. `csvFile` acepta un archivo alternativo con `-JcsvFile=ruta/insumos.csv`. Los parámetros de host, puerto y CSV se pueden sobrescribir con `-Jhost`, `-Jport`, `-Jprotocol` y `-JcsvFile`. Regenerar el plan restablece las variables predeterminadas:
+
+```powershell
+npm run jmeter:rendimiento:generate
+```
+
+Para ejecutar el caso de estudio de forma aislada, configure `.env` como en la prueba integral y ejecute:
+
+```powershell
+npm run test:jmeter:rendimiento
+```
+
+El ejecutor crea una base temporal, carga el seed, crea un cliente de prueba y un CSV temporal con sus credenciales, inicia la API y genera `results.jtl`, `dashboard/index.html` y `analysis.md` en `reports/jmeter/rendimiento_<identificador>/`. El CSV temporal se elimina al terminar; la base temporal también se elimina. El reporte incluye muestras, errores, p50, p95, p99 y solicitudes por segundo por servicio, más conclusiones basadas en los resultados. La consigna no establece umbrales de aceptación; compárelos con los objetivos definidos para el proyecto.
+
+El generador copia la plantilla [`scripts/templates/distrito-cosmetico-rendimiento.jmx`](scripts/templates/distrito-cosmetico-rendimiento.jmx), guardada con el formato nativo de JMeter. Así, regenerar el plan no produce diferencias de formato al abrirlo y guardarlo en JMeter. Si se hacen cambios permanentes en la interfaz, actualice también esa plantilla antes de volver a regenerar.
+
 ## Roles de la aplicación
 
 - **Invitado:** consulta el catálogo y usa un carrito local.
