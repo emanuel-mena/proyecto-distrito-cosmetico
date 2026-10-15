@@ -7,6 +7,8 @@
     "test": "node --check src/server.js && node --check src/seed/seed.js && node --check scripts/build-frontend.js && node --check scripts/dev.js && node --test test/*.test.js",
     "build": "node scripts/build-frontend.js",
     "seed": "node src/seed/seed.js",
+    "test:jmeter": "node scripts/run-jmeter.js",
+    "jmeter:generate": "node scripts/generate-jmeter-plan.js",
     "dev": "node scripts/dev.js",
     "dev:api": "node --watch src/server.js",
     "start": "node src/server.js"

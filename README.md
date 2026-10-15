@@ -240,6 +240,21 @@ Las pruebas del backend cubren el rol seguro de registro, identificadores de pro
 
 Las pruebas unitarias usan dobles de los modelos y no sustituyen una prueba de integración con una instancia real de MongoDB. La conversión de moneda también requiere acceso a Internet en tiempo de ejecución.
 
+### Prueba integral con JMeter
+
+Con `.env` configurado, Java 21 y Apache JMeter 5.6.3 instalado en `../apache-jmeter-5.6.3/apache-jmeter-5.6.3` (o indicando `JMETER_HOME`), ejecute:
+
+```bash
+npm run test:jmeter
+```
+
+El ejecutor crea una base MongoDB temporal con nombre único, ejecuta el seed, inicia la API en un puerto libre y corre `jmeter/distrito-cosmetico.jmx`. El plan verifica las 23 rutas mediante 26 pasos funcionales y dos rechazos esperados: HTTP `400` para un producto con stock cero y HTTP `409` para uno no disponible. JMeter los considera correctos solo si coinciden el código y el mensaje. Luego aplica 10 usuarios durante 60 segundos a cuatro rutas de lectura, con un máximo de 5 solicitudes por segundo. Las credenciales se leen del entorno y no se guardan en el plan.
+
+Los resultados se guardan en `reports/jmeter/<identificador>/`: `results.jtl`, `dashboard/index.html`, `analysis.md` y registros de preparación. La base temporal se elimina al terminar; si la eliminación falla, `analysis.md` indica el nombre exacto para revisión. Para regenerar el plan después de editar su generador, use `npm run jmeter:generate`.
+Si hay varias versiones de Java instaladas, configure `JMETER_JAVA_HOME` con la ruta del JDK 21; en Windows el ejecutor detecta `C:\Program Files\Java\jdk-21`.
+
+Para ajustar el plan desde la interfaz de JMeter, abra `jmeter/distrito-cosmetico.jmx` y edite **Test Plan → User Defined Variables**. Allí están el host y puerto, las credenciales (tomadas del entorno por defecto), los IDs de productos del seed, los datos de pedido y la carga (`loadThreads`, `loadRampSeconds`, `loadDurationSeconds`, `targetRequestsPerMinute`). `npm run test:jmeter` usa esos valores del archivo; `npm run jmeter:generate` reconstruye el `.jmx` y restablece sus valores predeterminados.
+
 ## Roles de la aplicación
 
 - **Invitado:** consulta el catálogo y usa un carrito local.
