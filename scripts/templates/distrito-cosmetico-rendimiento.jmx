@@ -25,7 +25,7 @@
           </elementProp>
           <elementProp name="csvFile" elementType="Argument">
             <stringProp name="Argument.name">csvFile</stringProp>
-            <stringProp name="Argument.value">${__P(csvFile,jmeter/rendimiento-insumos.csv)}</stringProp>
+            <stringProp name="Argument.value">${__P(csvFile,jmeter/rendimiento-insumos.local.csv)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="loadThreads" elementType="Argument">
@@ -67,7 +67,7 @@
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config - insumos externos">
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config - insumos externos" enabled="true">
           <stringProp name="filename">${csvFile}</stringProp>
           <stringProp name="fileEncoding">UTF-8</stringProp>
           <stringProp name="variableNames">correo,password,searchTerm</stringProp>
@@ -84,9 +84,9 @@
           <intProp name="calcMode">1</intProp>
         </ConstantThroughputTimer>
         <hashTree/>
-        <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Login once per virtual user"/>
+        <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Login once per virtual user" enabled="true"/>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="S01 POST /api/auth/login">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="S01 POST /api/auth/login" enabled="true">
             <intProp name="HTTPSampler.connect_timeout">5000</intProp>
             <intProp name="HTTPSampler.response_timeout">15000</intProp>
             <stringProp name="HTTPSampler.domain">${apiHost}</stringProp>
@@ -296,7 +296,7 @@ try {
           </JSR223PostProcessor>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="S05 GET /api/orders" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="S05 GET /api/orders">
           <intProp name="HTTPSampler.connect_timeout">5000</intProp>
           <intProp name="HTTPSampler.response_timeout">15000</intProp>
           <stringProp name="HTTPSampler.domain">${apiHost}</stringProp>

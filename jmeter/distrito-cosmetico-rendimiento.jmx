@@ -25,7 +25,7 @@
           </elementProp>
           <elementProp name="csvFile" elementType="Argument">
             <stringProp name="Argument.name">csvFile</stringProp>
-            <stringProp name="Argument.value">${__P(csvFile,jmeter/rendimiento-insumos.csv)}</stringProp>
+            <stringProp name="Argument.value">${__P(csvFile,jmeter/rendimiento-insumos.local.csv)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="loadThreads" elementType="Argument">
