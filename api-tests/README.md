@@ -9,7 +9,9 @@ Esta suite implementa los 30 casos de la consigna con Vitest y Axios. Ejecuta so
 | Ejecución y reportes | `vitest.config.mjs` | Descubrimiento de casos, tiempos límite y reporte JUnit. |
 | Cliente HTTP | `client.mjs` | URL base, autenticación, timeout y conservación de respuestas 4xx/5xx. |
 | Datos | `data.mjs` | Usuarios, categoría, productos y órdenes de prueba; restablece el estado antes de cada caso. |
-| Pruebas | `api.test.mjs` | 30 escenarios numerados, assertions de status y body, y efectos observables. |
+| Ejecución de pruebas | `api.test.mjs` | Inicia la API y la base temporal, restablece los datos e invoca los cinco grupos de casos. |
+| Contexto compartido | `context.mjs` | Cliente HTTP, datos del caso y funciones auxiliares. |
+| Casos | `auth.cases.mjs`, `products.cases.mjs`, `categories.cases.mjs`, `cart.cases.mjs`, `orders.cases.mjs` | Los 30 escenarios numerados, organizados por área. |
 
 La suite lee `MONGODB_URI` del entorno o de `.env`, pero se conecta con un **nombre de base único** (`api_test_...`). Al finalizar, elimina esa base. Se niega a ejecutar si falta la URI y solo elimina una base cuyo nombre coincide con el creado por la propia ejecución. El servidor Express se inicia en un puerto libre. No se ejecuta el seed de la aplicación.
 
