@@ -40,24 +40,52 @@ test/
 | Cliente HTTP | `test/api-tests/clients/client.mjs` | URL base, autenticación, timeout y conservación de respuestas 4xx/5xx. |
 | Datos | `test/data/data.mjs` | Usuarios, categoría, productos y órdenes de prueba; restablece el estado antes de cada caso. |
 | Utilidades | `test/api-tests/utils/context.mjs` | Cliente HTTP, datos del caso y funciones auxiliares compartidas. |
-| Ejecución de pruebas | `test/api-tests/tests/api.test.mjs` | Inicia la API y la base temporal, restablece los datos e invoca los cinco grupos de casos. |
+| Ejecución de pruebas | `test/api-tests/tests/api.test.mjs` | Según el modo, usa el backend externo o inicia la API con una base temporal; restablece los datos e invoca los cinco grupos de casos. |
 | Casos | `test/api-tests/tests/<área>/<área>.cases.mjs` | Los 30 escenarios numerados, un archivo por área: `auth`, `products`, `categories`, `cart` y `orders`. |
 
-La suite lee `MONGODB_URI` del entorno o de `.env`, pero se conecta con un **nombre de base único** (`api_test_...`). Al finalizar, elimina esa base. Se niega a ejecutar si falta la URI y solo elimina una base cuyo nombre coincide con el creado por la propia ejecución. El servidor Express se inicia en un puerto libre, por lo que no es necesario levantar el backend aparte. No se ejecuta el seed de la aplicación.
+## Modos de ejecución
+
+La suite funciona de dos maneras, según exista o no la variable `API_BASE_URL`:
+
+| Modo | Cuándo se activa | Qué hace |
+| --- | --- | --- |
+| **Externo** | `API_BASE_URL` definida (por ejemplo `http://localhost:3000`) | Llama al backend ya levantado. Si el backend está caído, los casos fallan por no poder conectarse. Usa la base de `MONGODB_URI`. |
+| **Autónomo** | `API_BASE_URL` ausente | Inicia la aplicación Express en un puerto libre y usa una base temporal (`api_test_...`), que elimina al terminar. |
+
+En modo externo, la suite borra y recrea usuarios, categorías, productos, órdenes y carritos antes de cada caso. Por eso se niega a ejecutar si el nombre de la base de `MONGODB_URI` no contiene `test`, y el backend debe usar esa misma base. En ambos modos se requiere `MONGODB_URI`, y no se ejecuta el seed de la aplicación.
 
 ## Ejecución
 
-Desde la raíz del repositorio:
+Desde la raíz del repositorio, una sola vez:
 
 ```powershell
 npm ci
+```
+
+Variables del archivo `.env`:
+
+| Variable | Descripción |
+| --- | --- |
+| `MONGODB_URI` | Conexión a MongoDB. En modo externo, el nombre de la base debe contener `test` (por ejemplo `.../distrito-cosmetico-test?...`). |
+| `JWT_SECRET` | Al menos 32 caracteres. Debe ser el mismo para el backend y las pruebas. |
+| `API_BASE_URL` | Opcional. Si existe, activa el modo externo (`http://localhost:3000`). |
+
+Modo externo, con dos terminales:
+
+```powershell
+# Terminal 1
+npm run dev:api
+
+# Terminal 2
 npm run test:api
 ```
 
-Se requiere Node.js 20.19 o superior y acceso a una instancia MongoDB mediante `MONGODB_URI`. La base configurada en la URI no se usa para las pruebas; la misma conexión sirve para crear la base temporal. El resultado detallado aparece en terminal y en `reports/api/junit.xml` (archivo local ignorado por Git). Para volver a ejecutar solo un caso, use por ejemplo:
+Con el backend activo deben pasar los 30 casos; si el backend se detiene, los casos fallan por no poder conectarse. Para el modo autónomo, elimine `API_BASE_URL` del `.env` y ejecute solo `npm run test:api`.
+
+Se requiere Node.js 20.19 o superior y acceso a una instancia MongoDB. El resultado detallado aparece en terminal y en `reports/api/junit.xml` (archivo local ignorado por Git). Para volver a ejecutar solo un caso, use su número:
 
 ```powershell
-npx vitest run --config test/config/vitest.config.mjs -t '23 crea una orden'
+npx vitest run --config test/config/vitest.config.mjs -t "23"
 ```
 
 ## Estrategia y cobertura
@@ -67,6 +95,7 @@ npx vitest run --config test/config/vitest.config.mjs -t '23 crea una orden'
 - Cada caso recibe datos nuevos. Los escenarios que crean, actualizan o eliminan recursos no dependen de la ejecución de otro caso.
 - Se comprueban tanto `status` como `body`. En los escenarios de denegación se verifica además que no haya cambios no autorizados.
 - Axios usa `validateStatus: () => true` para que las respuestas 4xx/5xx lleguen a las assertions en vez de convertirse en excepciones del cliente.
+- Cada caso se identifica con su número y se rotula como **Positiva** o **Negativa**; todos los casos incluyen en el nombre el código HTTP esperado, de modo que la salida de la terminal ya indica qué se valida.
 
 ## Inventario de casos
 
@@ -109,6 +138,12 @@ El caso 21 comprueba `201` porque el endpoint `PUT` actual reutiliza el controla
 
 1. Ejecutar `npm run test:api` y mostrar el resumen de 30 casos aprobados y el reporte JUnit.
 2. Abrir un caso positivo (23) y uno negativo (27) para explicar sus assertions.
-3. Para demostrar cómo se muestra un fallo, cambiar temporalmente la expectativa de estado del caso 10 de `404` a `200`, ejecutar el caso aislado y mostrar la diferencia entre esperado y real. Restaurar `404` y ejecutar de nuevo. **No entregar la suite con esa modificación.**
+3. Para demostrar cómo se muestra un fallo, cambiar temporalmente la expectativa de estado del caso 10 de `404` a `200`, ejecutarlo de forma aislada y mostrar la diferencia entre esperado y real. Restaurar `404` y ejecutar de nuevo. **No entregar la suite con esa modificación.**
+
+   ```powershell
+   npx vitest run --config test/config/vitest.config.mjs -t "10"
+   ```
+
+4. Detener el backend (`Ctrl + C` en la Terminal 1) y ejecutar de nuevo `npm run test:api`: todos los casos fallan por no poder conectarse al servidor.
 
 El reporte de cobertura de código no se usa como medida de cumplimiento: esta es una suite funcional por HTTP y el requisito se mide por endpoints y casos verificados.

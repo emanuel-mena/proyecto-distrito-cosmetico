@@ -12,12 +12,24 @@ import { registerCategoryTests } from "./categories/categories.cases.mjs";
 import { registerCartTests } from "./cart/cart.cases.mjs";
 import { registerOrderTests } from "./orders/orders.cases.mjs";
 
-process.env.JWT_SECRET = "api-test-secret-with-at-least-thirty-two-characters";
+dotenv.config();
+const API_URL = process.env.API_BASE_URL;
+if (!API_URL)
+  process.env.JWT_SECRET = "api-test-secret-with-at-least-thirty-two-characters";
 const require = createRequire(import.meta.url);
 let server, testDbName;
 
 beforeAll(async () => {
   dotenv.config();
+    if (API_URL) {
+    await mongoose.connect(process.env.MONGODB_URI);
+    if (!/test/i.test(mongoose.connection.name))
+      throw new Error(
+        `Modo externo: la base "${mongoose.connection.name}" debe contener "test" porque la suite borra sus datos`,
+      );
+    setApi(createApi(API_URL));
+    return;
+  }
   if (!process.env.MONGODB_URI)
     throw new Error("Configure MONGODB_URI para ejecutar la suite API");
   
