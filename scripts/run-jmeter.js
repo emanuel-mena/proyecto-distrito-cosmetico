@@ -9,11 +9,11 @@ const mongoose = require("mongoose");
 
 const root = path.resolve(__dirname, "..");
 const runId = `${new Date().toISOString().replace(/[-:.TZ]/g, "")}_${randomBytes(4).toString("hex")}`;
-const database = `distrito_cosmetico_jmeter_${runId.toLowerCase()}`;
+const database = `dc_jm_${randomBytes(8).toString("hex")}`;
 const output = path.join(root, "reports", "jmeter", runId);
 const jtl = path.join(output, "results.jtl");
 const dashboard = path.join(output, "dashboard");
-const plan = path.join(root, "jmeter", "distrito-cosmetico.jmx");
+const plan = path.join(root, "test", "jmeter", "distrito-cosmetico.jmx");
 const jmeterHome =
   process.env.JMETER_HOME ||
   path.resolve(root, "../apache-jmeter-5.6.3/apache-jmeter-5.6.3");
@@ -305,7 +305,7 @@ async function main() {
       await server.completion;
     }
     try {
-      if (!database.startsWith("distrito_cosmetico_jmeter_"))
+      if (!/^dc_jm_[0-9a-f]{16}$/.test(database))
         throw new Error("Nombre de base inseguro");
       await mongoose.connect(uri, { serverSelectionTimeoutMS: 10000 });
       if (mongoose.connection.name !== database)

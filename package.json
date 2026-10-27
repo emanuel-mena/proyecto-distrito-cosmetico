@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node --check src/server.js && node --check src/seed/seed.js && node --check scripts/build-frontend.js && node --check scripts/dev.js && node --test test/*.test.js",
-    "test:api": "vitest run --config api-tests/vitest.config.mjs",
+    "test": "node --check src/server.js && node --check src/seed/seed.js && node --check scripts/build-frontend.js && node --check scripts/dev.js && node --test test/unit/*.test.js",
+    "test:api": "vitest run --config test/api-tests/vitest.config.mjs",
     "build": "node scripts/build-frontend.js",
     "seed": "node src/seed/seed.js",
     "test:jmeter": "node scripts/run-jmeter.js",

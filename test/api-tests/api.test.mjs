@@ -23,7 +23,7 @@ beforeAll(async () => {
   // MongoDB receives a unique database name. The configured application's database is untouched.
   testDbName = `api_test_${randomUUID().replaceAll("-", "").slice(0, 24)}`;
   await mongoose.connect(process.env.MONGODB_URI, { dbName: testDbName });
-  const { app } = require("../src/server");
+  const { app } = require("../../src/server");
   server = app.listen(0, "127.0.0.1");
   await new Promise((resolve) => server.once("listening", resolve));
   setApi(createApi(`http://127.0.0.1:${server.address().port}`));

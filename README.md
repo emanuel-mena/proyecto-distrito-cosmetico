@@ -80,7 +80,10 @@ Además de los mínimos solicitados, la aplicación protege las operaciones admi
 |       |-- stores/      # estado y acceso a la API con Pinia
 |       `-- views/       # páginas de la SPA
 |-- scripts/             # desarrollo conjunto y build integrado
-|-- test/                # pruebas automatizadas del backend
+|-- test/
+|   |-- unit/           # pruebas unitarias del backend
+|   |-- api-tests/      # pruebas funcionales de API
+|   `-- jmeter/         # planes y datos de JMeter
 |-- .env.example
 `-- package.json
 ```
@@ -230,7 +233,7 @@ El backend consume `@fawazahmed0/currency-api` mediante dos orígenes públicos.
 
 ## Pruebas y calidad
 
-La suite de la segunda fase de automatización funcional de API, con **Vitest y Axios**, está documentada en [`api-tests/README.md`](api-tests/README.md). Ejecuta 30 casos HTTP sobre 17 combinaciones de método y ruta, con datos aislados y reporte JUnit:
+La suite de la segunda fase de automatización funcional de API, con **Vitest y Axios**, está documentada en [`test/api-tests/README.md`](test/api-tests/README.md). Ejecuta 30 casos HTTP sobre 17 combinaciones de método y ruta, con datos aislados y reporte JUnit:
 
 ```bash
 npm run test:api
@@ -254,24 +257,24 @@ Con `.env` configurado, Java 21 y Apache JMeter 5.6.3 instalado en `../apache-jm
 npm run test:jmeter
 ```
 
-El ejecutor crea una base MongoDB temporal con nombre único, ejecuta el seed, inicia la API en un puerto libre y corre `jmeter/distrito-cosmetico.jmx`. El plan verifica las 23 rutas mediante 26 pasos funcionales y dos rechazos esperados: HTTP `400` para un producto con stock cero y HTTP `409` para uno no disponible. JMeter los considera correctos solo si coinciden el código y el mensaje. Luego aplica 10 usuarios durante 60 segundos a cuatro rutas de lectura, con un máximo de 5 solicitudes por segundo. Las credenciales se leen del entorno y no se guardan en el plan.
+El ejecutor crea una base MongoDB temporal con nombre único, ejecuta el seed, inicia la API en un puerto libre y corre `test/jmeter/distrito-cosmetico.jmx`. El plan verifica las 23 rutas mediante 26 pasos funcionales y dos rechazos esperados: HTTP `400` para un producto con stock cero y HTTP `409` para uno no disponible. JMeter los considera correctos solo si coinciden el código y el mensaje. Luego aplica 10 usuarios durante 60 segundos a cuatro rutas de lectura, con un máximo de 5 solicitudes por segundo. Las credenciales se leen del entorno y no se guardan en el plan.
 
 Los resultados se guardan en `reports/jmeter/<identificador>/`: `results.jtl`, `dashboard/index.html`, `analysis.md` y registros de preparación. La base temporal se elimina al terminar; si la eliminación falla, `analysis.md` indica el nombre exacto para revisión. Para regenerar el plan después de editar su generador, use `npm run jmeter:generate`.
 Si hay varias versiones de Java instaladas, configure `JMETER_JAVA_HOME` con la ruta del JDK 21; en Windows el ejecutor detecta `C:\Program Files\Java\jdk-21`.
 
-Para ajustar el plan desde la interfaz de JMeter, abra `jmeter/distrito-cosmetico.jmx` y edite **Test Plan → User Defined Variables**. Allí están el host y puerto, las credenciales (tomadas del entorno por defecto), los IDs de productos del seed, los datos de pedido y la carga (`loadThreads`, `loadRampSeconds`, `loadDurationSeconds`, `targetRequestsPerMinute`). `npm run test:jmeter` usa esos valores del archivo; `npm run jmeter:generate` reconstruye el `.jmx` y restablece sus valores predeterminados.
+Para ajustar el plan desde la interfaz de JMeter, abra `test/jmeter/distrito-cosmetico.jmx` y edite **Test Plan → User Defined Variables**. Allí están el host y puerto, las credenciales (tomadas del entorno por defecto), los IDs de productos del seed, los datos de pedido y la carga (`loadThreads`, `loadRampSeconds`, `loadDurationSeconds`, `targetRequestsPerMinute`). `npm run test:jmeter` usa esos valores del archivo; `npm run jmeter:generate` reconstruye el `.jmx` y restablece sus valores predeterminados.
 
 ### Caso de estudio de rendimiento: cinco servicios
 
-El plan independiente [`jmeter/distrito-cosmetico-rendimiento.jmx`](jmeter/distrito-cosmetico-rendimiento.jmx) mide cinco servicios que cubren autenticación (`POST /api/auth/login`), categorías (`GET /api/categories`), búsqueda de productos (`GET /api/products?search`), carrito (`GET /api/cart`) y pedidos (`GET /api/orders`). El login ocurre una vez por usuario virtual para respetar el límite de 20 intentos cada 15 minutos. Las otras cuatro solicitudes se repiten durante la carga. Se extraen el token, ID del usuario, cantidades de categorías, productos, ítems del carrito y pedidos de las respuestas JSON. El plan valida HTTP 200 y `ok: true`.
+El plan independiente [`test/jmeter/distrito-cosmetico-rendimiento.jmx`](test/jmeter/distrito-cosmetico-rendimiento.jmx) mide cinco servicios que cubren autenticación (`POST /api/auth/login`), categorías (`GET /api/categories`), búsqueda de productos (`GET /api/products?search`), carrito (`GET /api/cart`) y pedidos (`GET /api/orders`). El login ocurre una vez por usuario virtual para respetar el límite de 20 intentos cada 15 minutos. Las otras cuatro solicitudes se repiten durante la carga. Se extraen el token, ID del usuario, cantidades de categorías, productos, ítems del carrito y pedidos de las respuestas JSON. El plan valida HTTP 200 y `ok: true`.
 
-En **Test Plan → User Defined Variables** se configuran `apiProtocol`, `apiHost`, `apiPort`, `csvFile`, `loadThreads`, `loadRampSeconds`, `loadDurationSeconds` y `targetRequestsPerMinute`. El ejecutor aislado admite entre 1 y 20 hilos por el límite de login de la API. Los insumos por usuario (`correo,password,searchTerm`) se leen mediante **CSV Data Set Config**. Para ejecución manual, cree una copia persistente e ignorada por Git de la plantilla [`jmeter/rendimiento-insumos.csv`](jmeter/rendimiento-insumos.csv):
+En **Test Plan → User Defined Variables** se configuran `apiProtocol`, `apiHost`, `apiPort`, `csvFile`, `loadThreads`, `loadRampSeconds`, `loadDurationSeconds` y `targetRequestsPerMinute`. El ejecutor aislado admite entre 1 y 20 hilos por el límite de login de la API. Los insumos por usuario (`correo,password,searchTerm`) se leen mediante **CSV Data Set Config**. Para ejecución manual, cree una copia persistente e ignorada por Git de la plantilla [`test/jmeter/rendimiento-insumos.csv`](test/jmeter/rendimiento-insumos.csv):
 
 ```powershell
 npm run jmeter:rendimiento:csv
 ```
 
-El comando deja `jmeter/rendimiento-insumos.local.csv` y conserva su contenido si ya existe. Reemplace las credenciales de ejemplo por credenciales válidas; para varios hilos use cuentas distintas, pues compartir una cuenta puede causar conflictos al crear el carrito. El plan usa ese archivo por defecto. `csvFile` acepta un archivo alternativo con `-JcsvFile=ruta/insumos.csv`. Los parámetros de host, puerto y CSV se pueden sobrescribir con `-Jhost`, `-Jport`, `-Jprotocol` y `-JcsvFile`. Regenerar el plan restablece las variables predeterminadas:
+El comando deja `test/jmeter/rendimiento-insumos.local.csv` y conserva su contenido si ya existe. Reemplace las credenciales de ejemplo por credenciales válidas; para varios hilos use cuentas distintas, pues compartir una cuenta puede causar conflictos al crear el carrito. El plan usa ese archivo por defecto. `csvFile` acepta un archivo alternativo con `-JcsvFile=ruta/insumos.csv`. Los parámetros de host, puerto y CSV se pueden sobrescribir con `-Jhost`, `-Jport`, `-Jprotocol` y `-JcsvFile`. Regenerar el plan restablece las variables predeterminadas:
 
 ```powershell
 npm run jmeter:rendimiento:generate

@@ -2,11 +2,11 @@ import bcrypt from "bcryptjs";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
-const User = require("../src/models/User");
-const Category = require("../src/models/Category");
-const Product = require("../src/models/Product");
-const Order = require("../src/models/Order");
-const Cart = require("../src/models/Cart");
+const User = require("../../src/models/User");
+const Category = require("../../src/models/Category");
+const Product = require("../../src/models/Product");
+const Order = require("../../src/models/Order");
+const Cart = require("../../src/models/Cart");
 
 export const password = "Password123!";
 let hashedPassword;

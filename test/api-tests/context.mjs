@@ -2,7 +2,7 @@ import { expect } from "vitest";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
-const sign = require("../src/utils/jwt");
+const sign = require("../../src/utils/jwt");
 
 export let api, as;
 let data;

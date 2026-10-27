@@ -2,14 +2,14 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 process.env.JWT_SECRET = "test-secret-with-at-least-thirty-two-characters";
 
-const authController = require("../src/controllers/auth.controller");
-const cartController = require("../src/controllers/cart.controller");
-const categoryController = require("../src/controllers/category.controller");
-const orderController = require("../src/controllers/order.controller");
-const productController = require("../src/controllers/product.controller");
-const User = require("../src/models/User");
-const Product = require("../src/models/Product");
-const Category = require("../src/models/Category");
+const authController = require("../../src/controllers/auth.controller");
+const cartController = require("../../src/controllers/cart.controller");
+const categoryController = require("../../src/controllers/category.controller");
+const orderController = require("../../src/controllers/order.controller");
+const productController = require("../../src/controllers/product.controller");
+const User = require("../../src/models/User");
+const Product = require("../../src/models/Product");
+const Category = require("../../src/models/Category");
 
 const response = () => {
   const state = { status: 200, body: null };
@@ -124,8 +124,8 @@ test("una categoría requiere nombre antes de generar el slug", async () => {
 });
 
 test("una orden guarda sus productos y descuenta el stock", async () => {
-  const Cart = require("../src/models/Cart");
-  const Order = require("../src/models/Order");
+  const Cart = require("../../src/models/Cart");
+  const Order = require("../../src/models/Order");
   const originalCartFindOne = Cart.findOne;
   const originalCartUpdate = Cart.findByIdAndUpdate;
   const originalProductUpdate = Product.findOneAndUpdate;
@@ -179,7 +179,7 @@ test("una orden guarda sus productos y descuenta el stock", async () => {
 });
 
 test("una orden rechaza productos eliminados sin modificar el stock", async () => {
-  const Cart = require("../src/models/Cart");
+  const Cart = require("../../src/models/Cart");
   const originalCartFindOne = Cart.findOne;
   const originalProductUpdate = Product.findOneAndUpdate;
   let stockUpdates = 0;
@@ -214,8 +214,8 @@ test("una orden rechaza productos eliminados sin modificar el stock", async () =
 });
 
 test("el stock se restaura cuando no se puede crear la orden", async () => {
-  const Cart = require("../src/models/Cart");
-  const Order = require("../src/models/Order");
+  const Cart = require("../../src/models/Cart");
+  const Order = require("../../src/models/Order");
   const originalCartFindOne = Cart.findOne;
   const originalProductConditionalUpdate = Product.findOneAndUpdate;
   const originalProductUpdate = Product.findByIdAndUpdate;

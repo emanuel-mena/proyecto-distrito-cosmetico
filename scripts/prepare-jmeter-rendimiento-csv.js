@@ -2,8 +2,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
-const source = path.join(root, 'jmeter', 'rendimiento-insumos.csv');
-const output = path.join(root, 'jmeter', 'rendimiento-insumos.local.csv');
+const source = path.join(root, 'test', 'jmeter', 'rendimiento-insumos.csv');
+const output = path.join(root, 'test', 'jmeter', 'rendimiento-insumos.local.csv');
 const expectedHeader = 'correo,password,searchTerm';
 
 if (!fs.existsSync(source)) throw new Error(`No existe la plantilla: ${source}`);

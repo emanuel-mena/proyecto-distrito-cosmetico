@@ -2,10 +2,10 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 
 process.env.JWT_SECRET = "test-secret-with-at-least-thirty-two-characters";
-const { app } = require("../src/server");
-const User = require("../src/models/User");
-const Product = require("../src/models/Product");
-const sign = require("../src/utils/jwt");
+const { app } = require("../../src/server");
+const User = require("../../src/models/User");
+const Product = require("../../src/models/Product");
+const sign = require("../../src/utils/jwt");
 
 test("las credenciales con operadores MongoDB se rechazan", async () => {
   const server = app.listen(0);

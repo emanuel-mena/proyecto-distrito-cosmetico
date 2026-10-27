@@ -1,6 +1,6 @@
 # Pruebas funcionales de API
 
-Esta suite implementa los 30 casos de la consigna con Vitest y Axios. Ejecuta solicitudes HTTP reales contra la aplicación Express y una base MongoDB de prueba. No sustituye las pruebas unitarias existentes en `test/`.
+Esta suite implementa los 30 casos de la consigna con Vitest y Axios. Ejecuta solicitudes HTTP reales contra la aplicación Express y una base MongoDB de prueba. No sustituye las pruebas unitarias existentes en `test/unit/`.
 
 ## Arquitectura
 
@@ -27,7 +27,7 @@ npm run test:api
 Se requiere Node.js 20.19 o superior y acceso a una instancia MongoDB mediante `MONGODB_URI`. La base configurada en la URI no se usa para las pruebas; la misma conexión sirve para crear la base temporal. El resultado detallado aparece en terminal y en `reports/api/junit.xml` (archivo local ignorado por Git). Para volver a ejecutar solo un caso, use por ejemplo:
 
 ```powershell
-npx vitest run --config api-tests/vitest.config.mjs -t '23 crea una orden'
+npx vitest run --config test/api-tests/vitest.config.mjs -t '23 crea una orden'
 ```
 
 ## Estrategia y cobertura
