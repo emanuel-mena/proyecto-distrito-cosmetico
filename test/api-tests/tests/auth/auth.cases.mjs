@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { password } from "./data.mjs";
-import { api, errorIs, getData } from "./context.mjs";
+import { password } from "../../../data/data.mjs";
+import { api, errorIs, getData } from "../../utils/context.mjs";
 
 export function registerAuthTests() {
   describe("Autenticación", () => {

@@ -2,18 +2,48 @@
 
 Esta suite implementa los 30 casos de la consigna con Vitest y Axios. Ejecuta solicitudes HTTP reales contra la aplicación Express y una base MongoDB de prueba. No sustituye las pruebas unitarias existentes en `test/unit/`.
 
+## Estructura
+
+```
+test/
+├── api-tests/
+│   ├── clients/
+│   │   └── client.mjs
+│   ├── tests/
+│   │   ├── auth/
+│   │   │   └── auth.cases.mjs
+│   │   ├── products/
+│   │   │   └── products.cases.mjs
+│   │   ├── categories/
+│   │   │   └── categories.cases.mjs
+│   │   ├── cart/
+│   │   │   └── cart.cases.mjs
+│   │   ├── orders/
+│   │   │   └── orders.cases.mjs
+│   │   └── api.test.mjs
+│   ├── utils/
+│   │   └── context.mjs
+│   └── README.md
+├── config/
+│   └── vitest.config.mjs
+├── data/
+│   └── data.mjs
+├── jmeter/
+└── unit/
+```
+
 ## Arquitectura
 
 | Capa | Archivo | Responsabilidad |
 | --- | --- | --- |
-| Ejecución y reportes | `vitest.config.mjs` | Descubrimiento de casos, tiempos límite y reporte JUnit. |
-| Cliente HTTP | `client.mjs` | URL base, autenticación, timeout y conservación de respuestas 4xx/5xx. |
-| Datos | `data.mjs` | Usuarios, categoría, productos y órdenes de prueba; restablece el estado antes de cada caso. |
-| Ejecución de pruebas | `api.test.mjs` | Inicia la API y la base temporal, restablece los datos e invoca los cinco grupos de casos. |
-| Contexto compartido | `context.mjs` | Cliente HTTP, datos del caso y funciones auxiliares. |
-| Casos | `auth.cases.mjs`, `products.cases.mjs`, `categories.cases.mjs`, `cart.cases.mjs`, `orders.cases.mjs` | Los 30 escenarios numerados, organizados por área. |
+| Configuración | `test/config/vitest.config.mjs` | Descubrimiento de casos, tiempos límite y reporte JUnit. |
+| Cliente HTTP | `test/api-tests/clients/client.mjs` | URL base, autenticación, timeout y conservación de respuestas 4xx/5xx. |
+| Datos | `test/data/data.mjs` | Usuarios, categoría, productos y órdenes de prueba; restablece el estado antes de cada caso. |
+| Utilidades | `test/api-tests/utils/context.mjs` | Cliente HTTP, datos del caso y funciones auxiliares compartidas. |
+| Ejecución de pruebas | `test/api-tests/tests/api.test.mjs` | Inicia la API y la base temporal, restablece los datos e invoca los cinco grupos de casos. |
+| Casos | `test/api-tests/tests/<área>/<área>.cases.mjs` | Los 30 escenarios numerados, un archivo por área: `auth`, `products`, `categories`, `cart` y `orders`. |
 
-La suite lee `MONGODB_URI` del entorno o de `.env`, pero se conecta con un **nombre de base único** (`api_test_...`). Al finalizar, elimina esa base. Se niega a ejecutar si falta la URI y solo elimina una base cuyo nombre coincide con el creado por la propia ejecución. El servidor Express se inicia en un puerto libre. No se ejecuta el seed de la aplicación.
+La suite lee `MONGODB_URI` del entorno o de `.env`, pero se conecta con un **nombre de base único** (`api_test_...`). Al finalizar, elimina esa base. Se niega a ejecutar si falta la URI y solo elimina una base cuyo nombre coincide con el creado por la propia ejecución. El servidor Express se inicia en un puerto libre, por lo que no es necesario levantar el backend aparte. No se ejecuta el seed de la aplicación.
 
 ## Ejecución
 
@@ -27,7 +57,7 @@ npm run test:api
 Se requiere Node.js 20.19 o superior y acceso a una instancia MongoDB mediante `MONGODB_URI`. La base configurada en la URI no se usa para las pruebas; la misma conexión sirve para crear la base temporal. El resultado detallado aparece en terminal y en `reports/api/junit.xml` (archivo local ignorado por Git). Para volver a ejecutar solo un caso, use por ejemplo:
 
 ```powershell
-npx vitest run --config test/api-tests/vitest.config.mjs -t '23 crea una orden'
+npx vitest run --config test/config/vitest.config.mjs -t '23 crea una orden'
 ```
 
 ## Estrategia y cobertura

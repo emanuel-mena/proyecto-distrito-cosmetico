@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { Category } from "./data.mjs";
-import { api, as, token, errorIs, getData } from "./context.mjs";
+import { Category } from "../../../data/data.mjs";
+import { api, as, token, errorIs, getData } from "../../utils/context.mjs";
 
 export function registerCategoryTests() {
   describe("Categorías", () => {

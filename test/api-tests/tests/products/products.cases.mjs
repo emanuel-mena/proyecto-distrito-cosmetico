@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { Product } from "./data.mjs";
-import { api, as, token, errorIs, getData } from "./context.mjs";
+import { Product } from "../../../data/data.mjs";
+import { api, as, token, errorIs, getData } from "../../utils/context.mjs";
 
 export function registerProductTests() {
   describe("Productos", () => {

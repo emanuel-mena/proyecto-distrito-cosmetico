@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { api, as, token, errorIs, addAvailable, getData } from "./context.mjs";
+import { api, as, token, errorIs, addAvailable, getData } from "../../utils/context.mjs";
 
 export function registerCartTests() {
   describe("Carrito", () => {
