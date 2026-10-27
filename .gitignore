@@ -29,6 +29,8 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 reports/jmeter/
+reports/api/
+api-tests/.presentation-build/
 jmeter/rendimiento-insumos.local.csv
 *.lcov
 

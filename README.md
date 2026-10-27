@@ -230,6 +230,12 @@ El backend consume `@fawazahmed0/currency-api` mediante dos orígenes públicos.
 
 ## Pruebas y calidad
 
+La suite de la segunda fase de automatización funcional de API, con **Vitest y Axios**, está documentada en [`api-tests/README.md`](api-tests/README.md). Ejecuta 30 casos HTTP sobre 17 combinaciones de método y ruta, con datos aislados y reporte JUnit:
+
+```bash
+npm run test:api
+```
+
 ```bash
 npm test
 npm --prefix distrito-cosmetico-frontend run lint
