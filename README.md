@@ -81,9 +81,14 @@ Además de los mínimos solicitados, la aplicación protege las operaciones admi
 |       `-- views/       # páginas de la SPA
 |-- scripts/             # desarrollo conjunto y build integrado
 |-- test/
-|   |-- unit/           # pruebas unitarias del backend
-|   |-- api-tests/      # pruebas funcionales de API
-|   `-- jmeter/         # planes y datos de JMeter
+|   |-- api-tests/
+|   |   |-- clients/    # cliente HTTP (Axios)
+|   |   |-- tests/      # casos por área y punto de entrada
+|   |   `-- utils/      # utilidades compartidas
+|   |-- config/         # configuración de Vitest
+|   |-- data/           # datos de prueba
+|   |-- jmeter/         # planes y datos de JMeter
+|   `-- unit/           # pruebas unitarias del backend
 |-- .env.example
 `-- package.json
 ```

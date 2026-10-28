@@ -1,16 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { Product } from "./data.mjs";
-import { api, as, token, errorIs, getData } from "./context.mjs";
+import { Product } from "../../../data/data.mjs";
+import { api, as, token, errorIs, getData } from "../../utils/context.mjs";
 
 export function registerProductTests() {
   describe("Productos", () => {
-    it("07 lista los productos", async () => {
+    it("07 Positiva: lista los productos (200)", async () => {
       const r = await api.get("/api/products");
       expect(r.status).toBe(200);
       expect(r.data.ok).toBe(true);
       expect(r.data.data.map((p) => p.id)).toContain(101);
     });
-    it("08 filtra productos por categoría", async () => {
+    it("08 Positiva: filtra productos por categoría (200)", async () => {
       const r = await api.get("/api/products", {
         params: { categoria: getData().category.nombre },
       });
@@ -21,7 +21,7 @@ export function registerProductTests() {
         true,
       );
     });
-    it("09 obtiene un producto existente", async () => {
+    it("09 Positiva: obtiene un producto existente (200)", async () => {
       const r = await api.get("/api/products/101");
       expect(r.status).toBe(200);
       expect(r.data).toMatchObject({
@@ -29,14 +29,14 @@ export function registerProductTests() {
         data: { id: 101, nombre: "Serum API" },
       });
     });
-    it("10 devuelve 404 por un producto inexistente", async () => {
+    it("10 Negativa: producto inexistente devuelve 404", async () => {
       errorIs(
         await api.get("/api/products/999999"),
         404,
         "Producto no encontrado",
       );
     });
-    it("11 permite al administrador crear un producto", async () => {
+    it("11 Positiva: el administrador crea un producto (201)", async () => {
       const r = await as(token(getData().admin)).post("/api/products", {
         nombre: "Tónico API",
         categoria: getData().category.nombre,
@@ -54,7 +54,7 @@ export function registerProductTests() {
         },
       });
     });
-    it("12 impide a un cliente crear productos", async () => {
+    it("12 Negativa: un cliente no puede crear productos (403)", async () => {
       const r = await as(token(getData().clientA)).post("/api/products", {
         nombre: "Prohibido API",
         categoria: getData().category.nombre,

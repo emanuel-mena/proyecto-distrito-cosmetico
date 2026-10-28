@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { password } from "./data.mjs";
-import { api, errorIs, getData } from "./context.mjs";
+import { password } from "../../../data/data.mjs";
+import { api, errorIs, getData } from "../../utils/context.mjs";
 
 export function registerAuthTests() {
   describe("Autenticación", () => {
-    it("01 registra un cliente con datos válidos", async () => {
+    it("01 Positiva: registra un cliente con datos válidos (201)", async () => {
       const r = await api.post("/api/auth/register", {
         nombre: "Nuevo",
         correo: "nuevo@test.local",
@@ -17,7 +17,7 @@ export function registerAuthTests() {
       });
       expect(r.data.token).toEqual(expect.any(String));
     });
-    it("02 impide asignar rol administrador desde el registro público", async () => {
+    it("02 Positiva: el registro público no concede rol administrador (201)", async () => {
       const r = await api.post("/api/auth/register", {
         nombre: "Nuevo",
         correo: "nuevo@test.local",
@@ -27,7 +27,7 @@ export function registerAuthTests() {
       expect(r.status).toBe(201);
       expect(r.data).toMatchObject({ ok: true, user: { rol: "cliente" } });
     });
-    it("03 rechaza un correo de registro inválido", async () => {
+    it("03 Negativa: correo de registro inválido devuelve 400", async () => {
       errorIs(
         await api.post("/api/auth/register", {
           nombre: "Nuevo",
@@ -38,7 +38,7 @@ export function registerAuthTests() {
         "Datos de registro inválidos",
       );
     });
-    it("04 rechaza un correo duplicado", async () => {
+    it("04 Negativa: correo duplicado devuelve 409", async () => {
       errorIs(
         await api.post("/api/auth/register", {
           nombre: "Otro",
@@ -49,7 +49,7 @@ export function registerAuthTests() {
         "El correo ya está registrado",
       );
     });
-    it("05 inicia sesión con credenciales correctas", async () => {
+    it("05 Positiva: inicia sesión con credenciales correctas (200)", async () => {
       const r = await api.post("/api/auth/login", {
         correo: getData().clientA.correo,
         password,
@@ -61,7 +61,7 @@ export function registerAuthTests() {
       });
       expect(r.data.token).toEqual(expect.any(String));
     });
-    it("06 rechaza una contraseña incorrecta", async () => {
+    it("06 Negativa: contraseña incorrecta devuelve 401", async () => {
       errorIs(
         await api.post("/api/auth/login", {
           correo: getData().clientA.correo,
