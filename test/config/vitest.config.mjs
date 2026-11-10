@@ -7,5 +7,11 @@ export default defineConfig({
     testTimeout: 15_000,
     hookTimeout: 180_000,
     reporters: ['verbose', ['junit', { outputFile: 'reports/api/junit.xml' }]],
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.js'],
+      reporter: ['text-summary', 'lcov'],
+      reportsDirectory: 'reports/api/coverage',
+    },
   },
 });
