@@ -6,6 +6,8 @@
   "scripts": {
     "test": "node --check src/server.js && node --check src/seed/seed.js && node --check scripts/build-frontend.js && node --check scripts/dev.js && node --test test/unit/*.test.js",
     "test:api": "vitest run --config test/config/vitest.config.mjs",
+    "test:coverage": "node -e \"require('fs').mkdirSync('reports/unit',{recursive:true})\" && node --test --experimental-test-coverage --test-coverage-include=src/**/*.js --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=reports/unit/lcov.info test/unit/*.test.js",
+    "test:api:coverage": "vitest run --config test/config/vitest.config.mjs --coverage",
     "build": "node scripts/build-frontend.js",
     "seed": "node src/seed/seed.js",
     "test:jmeter": "node scripts/run-jmeter.js",
@@ -34,6 +36,7 @@
     "mongoose": "^9.9.2"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^5.0.5",
     "axios": "^1.21.0",
     "vitest": "^5.0.5"
   }

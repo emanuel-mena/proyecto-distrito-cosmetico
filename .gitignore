@@ -30,6 +30,7 @@ lib-cov
 coverage
 reports/jmeter/
 reports/api/
+reports/unit/
 test/api-tests/.presentation-build/
 test/jmeter/rendimiento-insumos.local.csv
 *.lcov
