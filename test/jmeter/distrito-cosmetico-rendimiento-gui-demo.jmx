@@ -23,7 +23,11 @@
           </elementProp>
           <elementProp name="csvFile" elementType="Argument">
             <stringProp name="Argument.name">csvFile</stringProp>
+<<<<<<< HEAD:jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
             <stringProp name="Argument.value">C:\Users\ecraf\OneDrive\Escritorio\Universidad\VVC del Software\proyecto-distrito-cosmetico\jmeter\rendimiento-insumos.local.csv</stringProp>
+=======
+            <stringProp name="Argument.value">C:\Users\ecraf\OneDrive\Escritorio\Universidad\VVC del Software\proyecto-distrito-cosmetico\test\jmeter\rendimiento-insumos.local.csv</stringProp>
+>>>>>>> cc14c0ed3af9b77b858fd9f0055cd4f86923be05:test/jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="loadThreads" elementType="Argument">
@@ -48,8 +52,11 @@
           </elementProp>
         </collectionProp>
       </elementProp>
+<<<<<<< HEAD:jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+=======
+>>>>>>> cc14c0ed3af9b77b858fd9f0055cd4f86923be05:test/jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Rendimiento - cinco servicios">
@@ -66,7 +73,11 @@
         </elementProp>
       </ThreadGroup>
       <hashTree>
+<<<<<<< HEAD:jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config - insumos externos" enabled="true">
+=======
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config - insumos externos">
+>>>>>>> cc14c0ed3af9b77b858fd9f0055cd4f86923be05:test/jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
           <stringProp name="filename">${csvFile}</stringProp>
           <stringProp name="fileEncoding">UTF-8</stringProp>
           <stringProp name="variableNames">correo,password,searchTerm</stringProp>
@@ -78,14 +89,24 @@
           <stringProp name="shareMode">shareMode.all</stringProp>
         </CSVDataSet>
         <hashTree/>
+<<<<<<< HEAD:jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
         <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Target requests per minute (all threads)" enabled="true">
+=======
+        <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Target requests per minute (all threads)">
+>>>>>>> cc14c0ed3af9b77b858fd9f0055cd4f86923be05:test/jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
           <stringProp name="throughput">${targetRequestsPerMinute}</stringProp>
           <intProp name="calcMode">1</intProp>
         </ConstantThroughputTimer>
         <hashTree/>
+<<<<<<< HEAD:jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
         <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Login once per virtual user" enabled="true"/>
         <hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="S01 POST /api/auth/login" enabled="true">
+=======
+        <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Login once per virtual user"/>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="S01 POST /api/auth/login">
+>>>>>>> cc14c0ed3af9b77b858fd9f0055cd4f86923be05:test/jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
             <intProp name="HTTPSampler.connect_timeout">5000</intProp>
             <intProp name="HTTPSampler.response_timeout">15000</intProp>
             <stringProp name="HTTPSampler.domain">${apiHost}</stringProp>
@@ -125,7 +146,11 @@
               <stringProp name="Assertion.custom_message"></stringProp>
             </ResponseAssertion>
             <hashTree/>
+<<<<<<< HEAD:jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
             <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Validate and extract JSON" enabled="true">
+=======
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Validate and extract JSON">
+>>>>>>> cc14c0ed3af9b77b858fd9f0055cd4f86923be05:test/jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
               <stringProp name="scriptLanguage">groovy</stringProp>
               <stringProp name="script">import groovy.json.JsonSlurper
 try {
@@ -157,7 +182,11 @@ try {
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
+<<<<<<< HEAD:jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
           <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers" enabled="true">
+=======
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers">
+>>>>>>> cc14c0ed3af9b77b858fd9f0055cd4f86923be05:test/jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -176,7 +205,11 @@ try {
             <stringProp name="Assertion.custom_message"></stringProp>
           </ResponseAssertion>
           <hashTree/>
+<<<<<<< HEAD:jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Validate and extract JSON" enabled="true">
+=======
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Validate and extract JSON">
+>>>>>>> cc14c0ed3af9b77b858fd9f0055cd4f86923be05:test/jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
             <stringProp name="scriptLanguage">groovy</stringProp>
             <stringProp name="script">import groovy.json.JsonSlurper
 try {
@@ -191,7 +224,11 @@ try {
           </JSR223PostProcessor>
           <hashTree/>
         </hashTree>
+<<<<<<< HEAD:jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="S03 GET /api/products?search" enabled="true">
+=======
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="S03 GET /api/products?search">
+>>>>>>> cc14c0ed3af9b77b858fd9f0055cd4f86923be05:test/jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
           <intProp name="HTTPSampler.connect_timeout">5000</intProp>
           <intProp name="HTTPSampler.response_timeout">15000</intProp>
           <stringProp name="HTTPSampler.domain">${apiHost}</stringProp>
@@ -241,7 +278,11 @@ try {
           </JSR223PostProcessor>
           <hashTree/>
         </hashTree>
+<<<<<<< HEAD:jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="S04 GET /api/cart" enabled="true">
+=======
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="S04 GET /api/cart">
+>>>>>>> cc14c0ed3af9b77b858fd9f0055cd4f86923be05:test/jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
           <intProp name="HTTPSampler.connect_timeout">5000</intProp>
           <intProp name="HTTPSampler.response_timeout">15000</intProp>
           <stringProp name="HTTPSampler.domain">${apiHost}</stringProp>
@@ -295,7 +336,11 @@ try {
           </JSR223PostProcessor>
           <hashTree/>
         </hashTree>
+<<<<<<< HEAD:jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="S05 GET /api/orders" enabled="true">
+=======
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="S05 GET /api/orders">
+>>>>>>> cc14c0ed3af9b77b858fd9f0055cd4f86923be05:test/jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
           <intProp name="HTTPSampler.connect_timeout">5000</intProp>
           <intProp name="HTTPSampler.response_timeout">15000</intProp>
           <stringProp name="HTTPSampler.domain">${apiHost}</stringProp>
@@ -348,7 +393,11 @@ try {
           </JSR223PostProcessor>
           <hashTree/>
         </hashTree>
+<<<<<<< HEAD:jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+=======
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+>>>>>>> cc14c0ed3af9b77b858fd9f0055cd4f86923be05:test/jmeter/distrito-cosmetico-rendimiento-gui-demo.jmx
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>

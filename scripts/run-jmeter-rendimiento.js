@@ -11,9 +11,9 @@ const User = require('../src/models/User');
 
 const root = path.resolve(__dirname, '..');
 const runId = `${new Date().toISOString().replace(/[-:.TZ]/g, '')}_${randomBytes(4).toString('hex')}`;
-const database = `distrito_cosmetico_rendimiento_${runId.toLowerCase()}`;
+const database = `dc_perf_${randomBytes(8).toString('hex')}`;
 const output = path.join(root, 'reports', 'jmeter', `rendimiento_${runId}`);
-const plan = path.join(root, 'jmeter', 'distrito-cosmetico-rendimiento.jmx');
+const plan = path.join(root, 'test', 'jmeter', 'distrito-cosmetico-rendimiento.jmx');
 const csvFile = path.join(output, 'insumos-temporales.csv');
 const jtl = path.join(output, 'results.jtl');
 const dashboard = path.join(output, 'dashboard');
@@ -176,7 +176,7 @@ async function main() {
     if (server?.proc.exitCode === null) { server.proc.kill(); await server.completion; }
     if (fs.existsSync(csvFile)) fs.unlinkSync(csvFile);
     try {
-      if (!database.startsWith('distrito_cosmetico_rendimiento_')) throw new Error('Nombre de base inseguro');
+      if (!/^dc_perf_[0-9a-f]{16}$/.test(database)) throw new Error('Nombre de base inseguro');
       await mongoose.connect(uri, { serverSelectionTimeoutMS: 10000 });
       if (mongoose.connection.name !== database) throw new Error('La conexión no apunta a la base temporal');
       await mongoose.connection.dropDatabase();

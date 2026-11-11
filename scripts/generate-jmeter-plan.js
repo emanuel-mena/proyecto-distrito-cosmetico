@@ -104,7 +104,7 @@ function group(name, children, threads, ramp, duration) {
 
 const testPlan = `<TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Distrito Cosmetico API" enabled="true">${prop('TestPlan.comments', 'Edit User Defined Variables to configure target, test data and load')}${bool('TestPlan.functional_mode', false)}${bool('TestPlan.tearDown_on_shutdown', true)}${bool('TestPlan.serialize_threadgroups', true)}<elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true"><collectionProp name="Arguments.arguments">${userDefinedVariables}</collectionProp></elementProp>${prop('TestPlan.user_define_classpath', '')}</TestPlan>`;
 const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3"><hashTree>${tree(testPlan, group('Functional API coverage', functional, 1, 1, 0) + group('Moderate read load', load, variable('loadThreads'), variable('loadRampSeconds'), variable('loadDurationSeconds')))}</hashTree></jmeterTestPlan>\n`;
-const output = path.resolve(__dirname, '../jmeter/distrito-cosmetico.jmx');
+const output = path.resolve(__dirname, '../test/jmeter/distrito-cosmetico.jmx');
 fs.mkdirSync(path.dirname(output), { recursive: true });
 fs.writeFileSync(output, xml);
 console.log(output);
