@@ -52,5 +52,17 @@ export function registerCartTests() {
       expect(r.status).toBe(200);
       expect(r.data).toMatchObject({ ok: true, data: { items: [] } });
     });
+    it("36 Negativa: un productId con operadores MongoDB devuelve 404 (404)", async () => {
+      errorIs(
+        await as(token(getData().clientA)).post("/api/cart/items", {
+          productId: { $ne: null },
+          cantidad: 1,
+        }),
+        404,
+        "Producto no encontrado",
+      );
+      const cart = await as(token(getData().clientA)).get("/api/cart");
+      expect(cart.data.data.items).toEqual([]);
+    });
   });
 }

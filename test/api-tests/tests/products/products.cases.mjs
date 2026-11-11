@@ -63,5 +63,59 @@ export function registerProductTests() {
       errorIs(r, 403, "Permisos insuficientes");
       expect(await Product.exists({ nombre: "Prohibido API" })).toBeNull();
     });
+    it("31 Negativa: una categoría con operadores MongoDB se rechaza al crear (400)", async () => {
+      const r = await as(token(getData().admin)).post("/api/products", {
+        nombre: "Inyección API",
+        categoria: { $ne: null },
+        precio: 100,
+      });
+      errorIs(r, 400, "Categoría no válida");
+      expect(await Product.exists({ nombre: "Inyección API" })).toBeNull();
+    });
+    it("32 Negativa: una categoría con operadores MongoDB se rechaza al actualizar (400)", async () => {
+      const r = await as(token(getData().admin)).put("/api/products/101", {
+        categoria: { $ne: null },
+      });
+      errorIs(r, 400, "Categoría no válida");
+    });
+    it("33 Negativa: el cliente no puede fijar id, _id ni categoriaRef (201)", async () => {
+      const forgedId = "507f1f77bcf86cd799439099";
+      const forgedRef = "507f1f77bcf86cd799439098";
+      const r = await as(token(getData().admin)).post("/api/products", {
+        _id: forgedId,
+        id: 5000,
+        categoriaRef: forgedRef,
+        nombre: "Asignación API",
+        categoria: getData().category.nombre,
+        precio: 900,
+      });
+      expect(r.status).toBe(201);
+      expect(r.data.data._id).not.toBe(forgedId);
+      expect(r.data.data.id).not.toBe(5000);
+      expect(r.data.data.categoriaRef).toBe(String(getData().category._id));
+    });
+    it("34 Negativa: actualizar no permite reescribir categoriaRef ni id (200)", async () => {
+      const r = await as(token(getData().admin)).put("/api/products/101", {
+        id: 7000,
+        categoriaRef: "507f1f77bcf86cd799439098",
+        precio: 2600,
+      });
+      expect(r.status).toBe(200);
+      expect(r.data.data).toMatchObject({ id: 101, precio: 2600 });
+      expect(r.data.data.categoriaRef).toBe(String(getData().category._id));
+    });
+    it("35 Positiva: el filtro por categoría solo devuelve esa categoría (200)", async () => {
+      await Product.create({
+        id: 103,
+        nombre: "Perfume API",
+        categoria: "Fragancias",
+        precio: 4000,
+      });
+      const r = await api.get("/api/products", {
+        params: { categoria: getData().category.nombre },
+      });
+      expect(r.status).toBe(200);
+      expect(r.data.data.map((p) => p.id).sort()).toEqual([101, 102]);
+    });
   });
 }
