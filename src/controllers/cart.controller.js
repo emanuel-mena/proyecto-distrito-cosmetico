@@ -1,12 +1,6 @@
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
-const mongoose = require("mongoose");
-
-const productQuery = (value) => {
-  if (/^\d+$/.test(String(value))) return { id: Number(value) };
-  if (mongoose.isValidObjectId(value)) return { _id: value };
-  return { _id: null };
-};
+const productQuery = require("../utils/identifierQuery");
 
 const view = async (c) => {
   await c.populate("items.producto");
@@ -63,7 +57,7 @@ exports.remove = async (req, res, next) => {
     const c = await Cart.findOne({ usuario: req.user._id });
     if (c) {
       const product = await Product.findOne(productQuery(req.params.productId));
-      const productId = product?._id || req.params.productId;
+      const productId = product?._id || String(req.params.productId);
       c.items = c.items.filter(
         (i) => String(i.producto) !== String(productId),
       );

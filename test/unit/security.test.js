@@ -83,3 +83,29 @@ test("errores inesperados no exponen detalles internos", async () => {
     User.findOne = original;
   }
 });
+
+test("un correo largo sin @ se rechaza sin backtracking costoso", async () => {
+  const server = app.listen(0);
+  try {
+    const started = Date.now();
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/api/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre: "Ataque", correo: "a".repeat(254), password: "Password123" }),
+    });
+    assert.equal(response.status, 400);
+    assert.ok(Date.now() - started < 1000);
+  } finally {
+    server.close();
+  }
+});
+
+test("los identificadores con operadores MongoDB no llegan a la consulta", () => {
+  const identifierQuery = require("../../src/utils/identifierQuery");
+  assert.deepEqual(identifierQuery({ $ne: null }), { _id: null });
+  assert.deepEqual(identifierQuery(["507f1f77bcf86cd799439011"]), { _id: null });
+  assert.deepEqual(identifierQuery(12), { id: 12 });
+  assert.deepEqual(identifierQuery("507f1f77bcf86cd799439011"), {
+    _id: { $eq: "507f1f77bcf86cd799439011" },
+  });
+});
