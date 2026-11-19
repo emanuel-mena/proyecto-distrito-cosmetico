@@ -1,12 +1,39 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
-const mongoose = require("mongoose");
+const identifierQuery = require("../utils/identifierQuery");
 
-const identifierQuery = (value) => {
-  if (/^\d+$/.test(String(value))) return { id: Number(value) };
-  if (mongoose.isValidObjectId(value)) return { _id: value };
-  return { _id: null };
+// Campos que el cliente puede fijar. `id`, `_id` y `categoriaRef` los calcula el servidor.
+const FIELDS = [
+  "nombre",
+  "categoria",
+  "precio",
+  "descripcion",
+  "imagen",
+  "disponible",
+  "seccion",
+  "promocion",
+  "stock",
+];
+
+const pick = (body) =>
+  Object.fromEntries(
+    FIELDS.filter((key) => Object.hasOwn(body || {}, key)).map((key) => [key, body[key]]),
+  );
+
+class InvalidCategoryError extends Error {}
+
+// Resuelve la categoría por nombre exacto; rechaza valores que no sean cadenas
+// para impedir operadores MongoDB como { $ne: null }.
+const resolveCategory = async (nombre) => {
+  if (typeof nombre !== "string" || !nombre.trim() || nombre.length > 100)
+    throw new InvalidCategoryError();
+  const category = await Category.findOne({ nombre: { $eq: nombre }, activa: true });
+  if (!category) throw new InvalidCategoryError();
+  return category;
 };
+
+const categoryError = (res) =>
+  res.status(400).json({ ok: false, error: "Categoría no válida" });
 
 exports.list = async (req, res, next) => {
   try {
@@ -14,7 +41,7 @@ exports.list = async (req, res, next) => {
     if (req.query.categoria) {
       if (typeof req.query.categoria !== "string" || req.query.categoria.length > 100)
         return res.status(400).json({ ok: false, error: "Categoría inválida" });
-      q.categoria = req.query.categoria;
+      q.categoria = { $eq: req.query.categoria };
     }
     if (req.query.search) {
       if (typeof req.query.search !== "string" || req.query.search.length > 100)
@@ -43,37 +70,26 @@ exports.get = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
   try {
-    const data = {
-      ...req.body,
-      id:
-        req.body.id ||
-        ((await Product.findOne().sort({ id: -1 }))?.id || 0) + 1,
-    };
-    if (data.categoria) {
-      const category = await Category.findOne({ nombre: data.categoria, activa: true });
-      if (!category)
-        return res.status(400).json({ ok: false, error: "Categoría no válida" });
-      data.categoriaRef = category._id;
-    }
+    const data = pick(req.body);
+    if (data.categoria !== undefined)
+      data.categoriaRef = (await resolveCategory(data.categoria))._id;
+    data.id = ((await Product.findOne().sort({ id: -1 }))?.id || 0) + 1;
     const p = await Product.create(data);
     res.status(201).json({ ok: true, data: p });
   } catch (e) {
+    if (e instanceof InvalidCategoryError) return categoryError(res);
     next(e);
   }
 };
 
 exports.update = async (req, res, next) => {
   try {
-    const data = { ...req.body };
-    if (data.categoria) {
-      const category = await Category.findOne({ nombre: data.categoria, activa: true });
-      if (!category)
-        return res.status(400).json({ ok: false, error: "Categoría no válida" });
-      data.categoriaRef = category._id;
-    }
+    const data = pick(req.body);
+    if (data.categoria !== undefined)
+      data.categoriaRef = (await resolveCategory(data.categoria))._id;
     const p = await Product.findOneAndUpdate(
       identifierQuery(req.params.id),
-      data,
+      { $set: data },
       { new: true, runValidators: true },
     );
     if (!p)
@@ -82,6 +98,7 @@ exports.update = async (req, res, next) => {
         .json({ ok: false, error: "Producto no encontrado" });
     res.json({ ok: true, data: p });
   } catch (e) {
+    if (e instanceof InvalidCategoryError) return categoryError(res);
     next(e);
   }
 };

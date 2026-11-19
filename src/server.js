@@ -65,6 +65,11 @@ const start = async () => {
   });
 };
 
-if (require.main === module) start();
+if (require.main === module) {
+  start().catch((err) => {
+    console.error("No se pudo iniciar el servidor:", err.message);
+    process.exit(1);
+  });
+}
 
 module.exports = { app, start };

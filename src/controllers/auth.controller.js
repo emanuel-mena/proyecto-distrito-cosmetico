@@ -2,11 +2,16 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const sign = require("../utils/jwt");
 
+// La longitud se valida antes del patrón y el patrón no tiene cuantificadores
+// solapados (las partes del dominio excluyen el punto), así que no hay backtracking.
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/;
+const isValidEmail = (correo) => correo.length <= 254 && EMAIL_PATTERN.test(correo);
+
 exports.register = async (req, res, next) => {
   try {
     const { nombre, correo, password } = req.body || {};
     if (typeof nombre !== "string" || typeof correo !== "string" || typeof password !== "string" ||
-        !nombre.trim() || nombre.length > 100 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo) || correo.length > 254 ||
+        !nombre.trim() || nombre.length > 100 || !isValidEmail(correo) ||
         password.length < 8 || password.length > 128)
       return res
         .status(400)
